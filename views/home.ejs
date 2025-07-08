@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+    <link rel="stylesheet" href="/public/css/home.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/public/js/home.js"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Student Manager</h2>
+        <button onclick="window.location.href='/'">Thông tin cá nhân</button>
+        <% if (data.role==='teacher' || data.role==='admin' ) { %>
+            <button onclick="">Class</button>
+            <% } %>
+
+                <% if (data.role==='admin' ) { %>
+                    <button onclick="showAdd()">Add</button>
+                    <% } %>
+
+                        <% if (data.role==='student' ) { %>
+                            <input type="hidden" id="studentId" value="<%= data.id %>">
+                            <button onclick="showStudentScore()">Xem điểm</button>
+                            <% } %>
+
+    </div>
+
+    <div class="main" id="mainContent">
+        <h3>Chào mừng đến với Ứng dụng quản lý sinh viên</h3>
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
+
+            <div style="flex: 1; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff;">
+                <h4>Thông tin cá nhân</h4>
+                <p><strong>Họ tên:</strong>
+                    <%= data.name %>
+                </p>
+                <p><strong>Vai trò:</strong>
+                    <%= data.role %>
+                </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button onclick="logout()"
+                    style="padding: 10px 20px; border: none; background-color: #dc3545; color: white; border-radius: 5px; cursor: pointer;">
+                    Đăng xuất
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
