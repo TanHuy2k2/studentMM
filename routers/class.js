@@ -1,10 +1,10 @@
 const express = require('express')
-const scoreModel = require('../models/scoreModel')
+const classModel = require('../models/class');
 
-const scoreRouter = express.Router();
+const classRouter = express.Router();
 
-scoreRouter.get('/get_score', (req, res, next) => {
-    scoreModel.get_score_subject(req.query.student_id)
+classRouter.get('/get_subject', (req, res, next) => {
+    classModel.get_subject_by_teacher_id(req.query.teacher_id)
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -13,4 +13,4 @@ scoreRouter.get('/get_score', (req, res, next) => {
         });
 })
 
-module.exports = scoreRouter;
+module.exports = classRouter;

@@ -32,6 +32,14 @@ const Account = {
                     ON ac.id = st.account_id
                     WHERE ac.id = ? LIMIT 1`;
         return query(sql, [acc_id]);
+    },
+    get_teacher_by_account: (acc_id) => {
+        const sql = `SELECT ac.role, ac.name, tc.id
+                    FROM student.accounts AS ac
+                    INNER JOIN student.teacher AS tc
+                    ON ac.id = tc.account_id
+                    WHERE ac.id = ? LIMIT 1`;
+        return query(sql, [acc_id]);
     }
 };
 

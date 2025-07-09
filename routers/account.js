@@ -1,5 +1,5 @@
 const express = require('express')
-const accountModel = require('../models/accountModel')
+const accountModel = require('../models/account')
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -42,11 +42,11 @@ accountRouter.post('/login', async (req, res, next) => {
             return res.json({ success: false });
         }
 
-        const privateKey = fs.readFileSync('./key/private.pem');
-        const token = jwt.sign({ id: result[0].id }, privateKey, { algorithm: 'RS256', expiresIn: '1h' });
+        const privateKey = fs.readFileSync('./key/privateKey.pem');
+        const token = jwt.sign({ id: result[0].id }, privateKey, { algorithm: 'RS256', expiresIn: '3h' });
         res.cookie('token', token, {
             httpOnly: true,
-            maxAge: 60 * 60 * 1000
+            maxAge: 3 * 60 * 60 * 1000
         })
         return res.json({ 'success': true });
     } catch (err) {

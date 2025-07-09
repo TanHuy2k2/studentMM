@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Student Management</title>
+    <title>home</title>
     <link rel="stylesheet" href="/public/css/home.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="/public/js/home.js"></script>
@@ -11,30 +11,30 @@
 
 <body>
     <div class="sidebar">
-        <h2>Student Manager</h2>
+        <h2>Quản lý học sinh</h2>
         <button onclick="window.location.href='/'">Thông tin cá nhân</button>
-        <% if (data.role==='teacher' || data.role==='admin' ) { %>
-            <button onclick="">Class</button>
+        <input type="hidden" id="ID" value="<%= data.id %>">
+        <% if (data.role==='Giáo viên' || data.role==='Quản lý' ) { %>
+            <button onclick="showSubject()">Lớp học</button>
             <% } %>
 
-                <% if (data.role==='admin' ) { %>
-                    <button onclick="showAdd()">Add</button>
+                <% if (data.role==='Quản lý' ) { %>
+                    <button onclick="showAdd()">Thêm</button>
                     <% } %>
 
-                        <% if (data.role==='student' ) { %>
-                            <input type="hidden" id="studentId" value="<%= data.id %>">
-                            <button onclick="showStudentScore()">Xem điểm</button>
+                        <% if (data.role==='Học sinh' ) { %>
+                            <button onclick="showScore()">Kết quả học tập</button>
                             <% } %>
 
     </div>
 
     <div class="main" id="mainContent">
-        <h3>Chào mừng đến với Ứng dụng quản lý sinh viên</h3>
+        <h3>Chào mừng đến quản lý học sinh</h3>
         <div style="display: flex; gap: 20px; margin-top: 20px;">
 
             <div style="flex: 1; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff;">
                 <h4>Thông tin cá nhân</h4>
-                <p><strong>Họ tên:</strong>
+                <p><strong>Tên:</strong>
                     <%= data.name %>
                 </p>
                 <p><strong>Vai trò:</strong>

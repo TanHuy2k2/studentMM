@@ -17,7 +17,7 @@ body {
 }
 
 .sidebar h2 {
-    font-size: 18px;
+    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -26,6 +26,7 @@ body {
     padding: 10px;
     margin-bottom: 10px;
     border: none;
+    font-size: 14px;
     background-color: #394b66;
     color: white;
     cursor: pointer;
@@ -63,6 +64,11 @@ td {
     text-align: left;
 }
 
+#col {
+    padding: 8px;
+    text-align: center;
+}
+
 input,
 select {
     margin: 8px 0;
@@ -79,5 +85,13 @@ button.submit-btn {
     background-color: #1f2a40;
     color: white;
     border: none;
+    cursor: pointer;
+}
+
+#btn-check {
+    background-color: #1f2a40;
+    color: white;
+    border: none;
+    padding: 10px 15px;
     cursor: pointer;
 }
