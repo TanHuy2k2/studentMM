@@ -4,14 +4,13 @@ const account = require('../models/account');
 
 const checkLogin = async (req, res, next) => {
     try {
-        const token = req.cookies.token;
+        const { token } = req.cookies;
         if (!token) {
             return res.render('login');
         }
 
         const cert = fs.readFileSync('./key/publicKey.crt');
         const decoded = jwt.verify(token, cert, { algorithms: ['RS256'] });
-
         const result = await account.get_account_by_id(decoded.id);
         if (result.length === 0) {
             return res.status(403).json({ success: false });
@@ -39,8 +38,6 @@ const checkLogin = async (req, res, next) => {
             default:
                 req.data = result[0];
         }
-
-
         next();
     } catch (err) {
         return res.status(401).json({

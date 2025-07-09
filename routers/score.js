@@ -1,7 +1,6 @@
-const express = require('express')
-const scoreModel = require('../models/score')
-
+const express = require('express');
 const scoreRouter = express.Router();
+const scoreModel = require('../models/score');
 
 scoreRouter.get('/get_score', (req, res, next) => {
     scoreModel.get_score_subject(req.query.student_id)

@@ -7,8 +7,7 @@ const Class = {
             FROM student.teacher_subject as ts
             inner join student.subject as sj
             ON ts.subject_id = sj.id
-            WHERE ts.teacher_id = ?
-        `;
+            WHERE ts.teacher_id = ?`;
         return query(sql, [teacher_id]);
     }
 }

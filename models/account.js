@@ -16,6 +16,7 @@ const Account = {
         const sql = 'SELECT * FROM accounts WHERE id = ? LIMIT 1';
         return query(sql, [id]);
     },
+
     get_student_by_account: (acc_id) => {
         const sql = `SELECT ac.role, ac.name, st.id, st.class_id 
                     FROM student.accounts AS ac
@@ -24,6 +25,7 @@ const Account = {
                     WHERE ac.id = ? LIMIT 1`;
         return query(sql, [acc_id]);
     },
+
     get_teacher_by_account: (acc_id) => {
         const sql = `SELECT ac.role, ac.name, tc.id
                     FROM student.accounts AS ac

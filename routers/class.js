@@ -1,7 +1,6 @@
-const express = require('express')
-const classModel = require('../models/class');
-
+const express = require('express');
 const classRouter = express.Router();
+const classModel = require('../models/class');
 
 classRouter.get('/get_subject', (req, res, next) => {
     classModel.get_subject_by_teacher_id(req.query.teacher_id)

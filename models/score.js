@@ -9,10 +9,10 @@ const Score = {
                    score.final
             FROM student.subject
             INNER JOIN student.score ON subject.id = score.subject_id
-            WHERE score.student_id = ?
-        `;
+            WHERE score.student_id = ?`;
         return query(sql, [student_id]);
     },
+
     get_student_score: (student_id) => {
         const sql = `
             SELECT st.id as student_id, acc.name, sc.attendance, sc.midterm, sc.final
@@ -21,16 +21,15 @@ const Score = {
             ON st.id = sc.student_id
             INNER JOIN student.accounts as acc
             ON st.account_id = acc.id
-            WHERE sc.subject_id = ?
-        `;
+            WHERE sc.subject_id = ?`;
         return query(sql, [student_id]);
     },
+
     update_score: (subject_id, student_id, attendance, midterm, final) => {
         const sql = `
             UPDATE student.score
             SET attendance = ?, midterm = ?, final = ?
-            WHERE subject_id = ? AND student_id = ?
-        `;
+            WHERE subject_id = ? AND student_id = ?`;
         return query(sql, [attendance, midterm, final, subject_id, student_id]);
     }
 }

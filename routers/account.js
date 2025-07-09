@@ -1,17 +1,14 @@
-const express = require('express')
-const accountModel = require('../models/account')
+const express = require('express');
+const accountRouter = express.Router();
+const accountModel = require('../models/account');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-
-const accountRouter = express.Router();
-
-const saltRounds = 10;
+const { SALT_ROUNDS } = require('../common/contants/defaultValue');
 
 accountRouter.post('/register', async (req, res, next) => {
     const { name, email, password, role } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     accountModel.register(name, email, hashedPassword, role)
         .then((result) => {
@@ -26,13 +23,11 @@ accountRouter.post('/login', async (req, res, next) => {
 
     try {
         const result = await accountModel.check_username(email);
-
         if (result.length === 0) {
             return res.json({ success: false });
         }
 
         const isMatch = await bcrypt.compare(password, result[0].password);
-
         if (!isMatch) {
             return res.json({ success: false });
         }
@@ -42,7 +37,8 @@ accountRouter.post('/login', async (req, res, next) => {
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 3 * 60 * 60 * 1000
-        })
+        });
+
         return res.json({ 'success': true });
     } catch (err) {
         return res.status(500).json({
