@@ -1,13 +1,4 @@
-const connection = require('./db');
-
-const query = (sql, params) => {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, params, (err, results) => {
-            if (err) return reject(err);
-            resolve(results);
-        });
-    });
-}
+const query = require('./db');
 
 const Account = {
     check_username: (email) => {

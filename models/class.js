@@ -1,13 +1,4 @@
-const connection = require('./db');
-
-const query = (sql, params) => {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, params, (err, results) => {
-            if (err) return reject(err);
-            resolve(results);
-        });
-    });
-}
+const query = require('./db');
 
 const Class = {
     get_subject_by_teacher_id: (teacher_id) => {

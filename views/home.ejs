@@ -14,18 +14,14 @@
         <h2>Quản lý học sinh</h2>
         <button onclick="window.location.href='/'">Thông tin cá nhân</button>
         <input type="hidden" id="ID" value="<%= data.id %>">
-        <% if (data.role==='Giáo viên' || data.role==='Quản lý' ) { %>
+        <% switch (data.role) { case 'admin' : %>
             <button onclick="showSubject()">Lớp học</button>
-            <% } %>
-
-                <% if (data.role==='Quản lý' ) { %>
-                    <button onclick="showAdd()">Thêm</button>
-                    <% } %>
-
-                        <% if (data.role==='Học sinh' ) { %>
-                            <button onclick="showScore()">Kết quả học tập</button>
-                            <% } %>
-
+            <button onclick="showAdd()">Thêm</button>
+            <% break; case 'teacher' : %>
+                <button onclick="showSubject()">Lớp học</button>
+                <% break; case 'student' : %>
+                    <button onclick="showScore()">Kết quả học tập</button>
+                    <% break; } %>
     </div>
 
     <div class="main" id="mainContent">
@@ -38,7 +34,13 @@
                     <%= data.name %>
                 </p>
                 <p><strong>Vai trò:</strong>
-                    <%= data.role %>
+                    <% switch (data.role) { case 'admin' : %>
+                        Quản trị viên
+                        <% break; case 'teacher' : %>
+                            Giáo viên
+                            <% break; case 'student' : %>
+                                Học sinh
+                                <% break; } %>
                 </p>
             </div>
 

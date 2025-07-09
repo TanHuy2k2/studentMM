@@ -8,7 +8,6 @@ scoreRouter.get('/get_score', (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            console.error(err);
             return res.status(500).json('Internal server error');
         });
 })
@@ -18,7 +17,6 @@ scoreRouter.get('/get_student_score', (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            console.error(err);
             return res.status(500).json('Internal server error');
         });
 })
@@ -29,7 +27,6 @@ scoreRouter.put('/update_score', (req, res, next) => {
         .then(() => {
             return res.json('Update score successfully');
         }).catch((err) => {
-            console.error(err);
             return res.status(500).json('Internal server error');
         });
 })

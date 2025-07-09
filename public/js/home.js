@@ -42,10 +42,11 @@ function showScore() {
       });
     })
     .catch(error => {
-      console.error("Lỗi khi lấy dữ liệu:", error);
+      document.getElementById('mainContent').innerHTML = `<p>Không thể tải kết quả học tập. Vui lòng thử lại sau.</p>`;
     });
 
 }
+
 function showSubject() {
   document.getElementById('mainContent').innerHTML = `
     <h1>Môn học</h1>
@@ -85,10 +86,11 @@ function showSubject() {
       });
     })
     .catch(error => {
-      console.error("Lỗi khi lấy dữ liệu:", error);
+      document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách môn học. Vui lòng thử lại sau.</p>`;
     });
 
 }
+
 function showStudentScore(subject_id) {
   document.getElementById('mainContent').innerHTML = `
     <h1>Môn học</h1>
@@ -137,7 +139,7 @@ function showStudentScore(subject_id) {
       });
     })
     .catch(error => {
-      console.error("Lỗi khi lấy dữ liệu:", error);
+      document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách học sinh. Vui lòng thử lại sau.</p>`;
     });
 }
 
@@ -184,7 +186,6 @@ function saveRow(button, subject_id, student_id) {
     alert("Cập nhật thành công!");
   })
     .catch(err => {
-      console.error("Error saving:", err);
       alert("Lỗi khi lưu dữ liệu!");
     });
   button.textContent = "Edit";
@@ -207,7 +208,6 @@ function logout() {
       }
     })
     .catch(error => {
-      console.error("Lỗi khi đăng xuất:", error);
       alert("Đã xảy ra lỗi khi đăng xuất.");
     });
 }

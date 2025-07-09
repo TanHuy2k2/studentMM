@@ -9,10 +9,7 @@ const accountRouter = express.Router();
 const saltRounds = 10;
 
 accountRouter.post('/register', async (req, res, next) => {
-    const name = req.body.name;
-    const email = req.body.email;
-    const password = req.body.password;
-    const role = req.body.role;
+    const { name, email, password, role } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -20,14 +17,12 @@ accountRouter.post('/register', async (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            console.error(err);
             return res.json('Internal server error');
         });
 })
 
 accountRouter.post('/login', async (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
+    const { email, password } = req.body;
 
     try {
         const result = await accountModel.check_username(email);
@@ -56,6 +51,7 @@ accountRouter.post('/login', async (req, res, next) => {
         });
     }
 })
+
 accountRouter.get('/logout', (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,

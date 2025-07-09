@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const account = require('../models/account');
-const score = require('../models/score');
 
 const checkLogin = async (req, res, next) => {
     try {
@@ -17,21 +16,30 @@ const checkLogin = async (req, res, next) => {
         if (result.length === 0) {
             return res.status(403).json({ success: false });
         }
-        if (result[0].role === 'Học sinh') {
-            const studentInfo = await account.get_student_by_account(result[0].id);
-            if (studentInfo.length > 0) {
-                req.data = studentInfo[0];
-            } else {
-                return res.status(403).json({ success: false });
-            }
-        } else if (result[0].role === 'Giáo viên') {
-            const teacherInfo = await account.get_teacher_by_account(result[0].id);
-            if (teacherInfo.length > 0) {
-                req.data = teacherInfo[0];
-            } else {
-                return res.status(403).json({ success: false });
-            }
-        } else { req.data = result[0]; }
+
+        switch (result[0].role) {
+            case 'student':
+                const studentInfo = await account.get_student_by_account(result[0].id);
+                if (studentInfo.length > 0) {
+                    req.data = studentInfo[0];
+                } else {
+                    return res.status(403).json({ success: false });
+                }
+                break;
+
+            case 'teacher':
+                const teacherInfo = await account.get_teacher_by_account(result[0].id);
+                if (teacherInfo.length > 0) {
+                    req.data = teacherInfo[0];
+                } else {
+                    return res.status(403).json({ success: false });
+                }
+                break;
+
+            default:
+                req.data = result[0];
+        }
+
 
         next();
     } catch (err) {

@@ -8,7 +8,6 @@ classRouter.get('/get_subject', (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            console.error(err);
             return res.status(500).json('Internal server error');
         });
 })

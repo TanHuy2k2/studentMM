@@ -8,4 +8,13 @@ const Connection = mysql.createConnection({
     database: process.env.DB_NAME
 });
 
-module.exports = Connection;
+const query = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(sql, params, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+}
+
+module.exports = query;
