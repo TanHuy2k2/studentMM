@@ -20,7 +20,7 @@ scoreRouter.get('/get_student_score', (req, res, next) => {
         });
 })
 
-scoreRouter.put('/update_score', (req, res, next) => {
+scoreRouter.patch('/update_score', (req, res, next) => {
     const { subject_id, student_id, attendance, midterm, final } = req.body
     scoreModel.update_score(subject_id, student_id, attendance, midterm, final)
         .then(() => {
