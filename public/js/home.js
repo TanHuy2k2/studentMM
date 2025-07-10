@@ -40,6 +40,11 @@ function showSubject() {
     });
 }
 
+function toggleExtraButtons() {
+  const extraBtns = document.getElementById("extraBtns");
+  extraBtns.style.display = (extraBtns.style.display === "none" || extraBtns.style.display === "") ? "block" : "none";
+}
+
 function logout() {
   $.ajax({
     url: '/account/logout',

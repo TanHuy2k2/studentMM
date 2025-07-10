@@ -4,7 +4,8 @@ const accountModel = require('../models/account');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const { SALT_ROUNDS } = require('../common/contants/defaultValue');
+const { SALT_ROUNDS } = require('../common/contants/contant');
+const first = require('../array_processing/first');
 
 accountRouter.post('/register', async (req, res, next) => {
     const { name, email, password, role } = req.body;
@@ -23,17 +24,17 @@ accountRouter.post('/login', async (req, res, next) => {
 
     try {
         const result = await accountModel.check_username(email);
-        if (result.length === 0) {
+        if (!result.length) {
             return res.json({ success: false });
         }
 
-        const isMatch = await bcrypt.compare(password, result[0].password);
+        const isMatch = await bcrypt.compare(password, first(result).password);
         if (!isMatch) {
             return res.json({ success: false });
         }
 
         const privateKey = fs.readFileSync('./key/privateKey.pem');
-        const token = jwt.sign({ id: result[0].id }, privateKey, { algorithm: 'RS256', expiresIn: '3h' });
+        const token = jwt.sign({ id: first(result).id }, privateKey, { algorithm: 'RS256', expiresIn: '3h' });
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 3 * 60 * 60 * 1000

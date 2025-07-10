@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -7,7 +8,7 @@ const accountRouter = require('./routers/account');
 const scoreRouter = require('./routers/score');
 const classRouter = require('./routers/class');
 const { checkLogin } = require('./middlewave/auth');
-const { PORT } = require('./common/contants/defaultValue');
+const PORT = process.env.PORT
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static(path.join(__dirname, 'public')));

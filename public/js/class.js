@@ -71,7 +71,7 @@ function saveClass() {
             alert("Thêm lớp học thành công!");
             showClass();
         } else {
-            alert(response.message || "Thêm lớp học thất bại!");
+            alert("Thêm lớp học thất bại!");
         }
     }).catch(error => {
         alert("Đã xảy ra lỗi khi thêm lớp học.");
@@ -116,7 +116,7 @@ function saveClassEdit(button, class_id) {
                 updateClass(this, class_id);
             };
         } else {
-            alert(response.message || "Thêm lớp học thất bại!");
+            alert("Thêm lớp học thất bại!");
         }
     }).catch(error => {
         alert("Đã xảy ra lỗi khi cập nhật lớp học.");
@@ -135,7 +135,7 @@ function deleteSoftClass(class_id) {
             alert("Xoá mềm lớp học thành công!");
             showClass();
         } else {
-            alert(response.message || "Xoá mềm lớp học thất bại!");
+            alert("Xoá mềm lớp học thất bại!");
         }
     }).catch(error => {
         alert("Đã xảy ra lỗi khi xoá mềm lớp học.");
@@ -154,7 +154,7 @@ function cancelDeleteSoftClass(class_id) {
             alert("Huỷ xoá mềm lớp học thành công!");
             showClass();
         } else {
-            alert(response.message || "Xoá mềm lớp học thất bại!");
+            alert("Xoá mềm lớp học thất bại!");
         }
     }).catch(error => {
         alert("Đã xảy ra lỗi khi xoá mềm lớp học.");
@@ -177,7 +177,7 @@ function deleteHardClass(class_id) {
             alert("Xoá lớp học thành công!");
             showClass();
         } else {
-            alert(response.message || "Xoá lớp học thất bại!");
+            alert("Xoá lớp học thất bại!");
         }
     }).catch(error => {
         alert("Đã xảy ra lỗi khi xoá cứng lớp học.");

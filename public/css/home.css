@@ -36,7 +36,28 @@ body {
     background-color: #506080;
 }
 
-/* Main content */
+.extra-buttons {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.extra-buttons button {
+    background-color: #506080;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+.extra-buttons button:hover {
+    background-color: #6c7a99;
+}
+
 .main {
     flex-grow: 1;
     padding: 20px;

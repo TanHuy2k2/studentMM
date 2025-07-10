@@ -26,7 +26,7 @@ classRouter.post('/add_class', async (req, res, next) => {
     try {
         const checkResult = await classModel.check_class(class_name);
         if (checkResult.exists) {
-            return res.json({ success: false, message: 'Đã tồn tại class' });
+            return res.json({ success: false });
         }
 
         const result = await classModel.add_class(class_name);
@@ -41,7 +41,7 @@ classRouter.patch('/update_class', async (req, res, next) => {
     try {
         const checkResult = await classModel.check_class(class_name);
         if (checkResult.exists) {
-            return res.json({ success: false, message: 'Đã tồn tại class' });
+            return res.json({ success: false });
         }
 
         const result = await classModel.update_class(class_id, class_name)
