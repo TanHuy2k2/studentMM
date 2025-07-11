@@ -4,8 +4,8 @@ const Class = {
     get_subject_by_teacher_id: (teacher_id) => {
         const sql = `
             SELECT ts.teacher_id, ts.subject_id, sj.name
-            FROM student.teacher_subject as ts
-            inner join student.subject as sj
+            FROM student.teacher_subject ts
+            inner join student.subject sj
             ON ts.subject_id = sj.id
             WHERE ts.teacher_id = ?`;
         return query(sql, [teacher_id]);
@@ -13,6 +13,11 @@ const Class = {
 
     get_all_class: () => {
         const sql = `SELECT * FROM student.class`;
+        return query(sql);
+    },
+
+    get_class_for_register: () => {
+        const sql = `SELECT * FROM student.class WHERE isDelete = false`;
         return query(sql);
     },
 

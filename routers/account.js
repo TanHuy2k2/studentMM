@@ -4,19 +4,28 @@ const accountModel = require('../models/account');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 const { SALT_ROUNDS } = require('../common/contants/contant');
 const first = require('../array_processing/first');
 
-accountRouter.post('/register', async (req, res, next) => {
+accountRouter.post('/register', upload.single('image'), async (req, res, next) => {
     const { name, email, password, role } = req.body;
+    const { buffer } = req.file;
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    accountModel.register(name, email, hashedPassword, role)
-        .then((result) => {
-            return res.json(result);
-        }).catch((err) => {
-            return res.json('Internal server error');
-        });
+    try {
+        const result = await accountModel.check_username(email);
+        if (result.length) {
+            return res.json({ success: false, message: 'Email already exists' });
+        }
+
+        const registerResult = await accountModel.register(name, email, hashedPassword, role, buffer);
+        return res.json(registerResult);
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
 })
 
 accountRouter.post('/login', async (req, res, next) => {

@@ -53,7 +53,7 @@ function showStudentScore(subject_id) {
           <th style="width: 12%;" id="col">Chuyên cần</th>
           <th style="width: 12%;" id="col">Giữa kì</th>
           <th style="width: 12%;" id="col">Cuối kì</th>
-          <th style="width: 12%;" id="col">Tổng điểm</th>
+          <th style="width: 12%;" id="col">Điểm trung bình</th>
           <th style="width: 12%;"></th>
         </tr>
       </thead>
@@ -71,7 +71,6 @@ function showStudentScore(subject_id) {
     const tbody = document.getElementById('scoreBody');
     let i = 1;
     response.forEach(score => {
-      const total = ((score.attendance + score.midterm + score.final) / 3).toFixed(2);
       const row = `
           <tr>
             <td id="col">${i}</td>
@@ -79,7 +78,7 @@ function showStudentScore(subject_id) {
             <td id="col">${score.attendance}</td>
             <td id="col">${score.midterm}</td>
             <td id="col">${score.final}</td>
-            <td id="col">${total}</td>
+            <td id="col">${score.avg_socre}</td>
             <td id="col"><button id="btn-check" onclick="editScore(this, ${subject_id}, ${score.student_id})">Cập nhật</button></td>
           </tr>
         `;
@@ -110,7 +109,6 @@ function saveScore(button, subject_id, student_id) {
   const attendance = row.cells[2].querySelector("input").value;
   const midterm = row.cells[3].querySelector("input").value;
   const final = row.cells[4].querySelector("input").value;
-  const total = ((parseFloat(attendance) + parseFloat(midterm) + parseFloat(final)) / 3).toFixed(2);
   row.cells[5].textContent = total;
   row.cells[2].textContent = attendance;
   row.cells[3].textContent = midterm;

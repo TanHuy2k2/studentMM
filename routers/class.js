@@ -20,6 +20,15 @@ classRouter.get('/get_all_class', (req, res, next) => {
         });
 })
 
+classRouter.get('/get_class_for_register', (req, res, next) => {
+    classModel.get_class_for_register()
+        .then((result) => {
+            return res.json(result);
+        }).catch((err) => {
+            return res.status(500).json('Internal server error');
+        });
+})
+
 classRouter.post('/add_class', async (req, res, next) => {
     const { class_name } = req.body;
 

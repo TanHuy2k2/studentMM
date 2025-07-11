@@ -15,13 +15,15 @@ const Score = {
 
     get_student_score: (student_id) => {
         const sql = `
-            SELECT st.id as student_id, acc.name, sc.attendance, sc.midterm, sc.final
-            FROM student.students as st
-            INNER JOIN student.score as sc
+            SELECT st.id AS student_id, acc.name, sc.attendance, sc.midterm, sc.final,
+            ROUND(AVG((sc.attendance + sc.midterm + sc.final) / 3), 2) AS avg_socre
+            FROM student.students st
+            INNER JOIN student.score sc 
             ON st.id = sc.student_id
-            INNER JOIN student.accounts as acc
+            INNER JOIN student.accounts acc 
             ON st.account_id = acc.id
-            WHERE sc.subject_id = ?`;
+            WHERE sc.subject_id = ?
+            GROUP BY st.id, acc.name, sc.attendance, sc.midterm, sc.final;`;
         return query(sql, [student_id]);
     },
 

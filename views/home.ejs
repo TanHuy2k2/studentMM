@@ -9,6 +9,7 @@
     <script src="/public/js/home.js"></script>
     <script src="/public/js/class.js"></script>
     <script src="/public/js/score.js"></script>
+    <script src="/public/js/student.js"></script>
 </head>
 
 <body>
@@ -18,11 +19,8 @@
         <input type="hidden" id="ID" value="<%= data.id %>">
         <% switch (data.role) { case 'admin' : %>
             <button onclick="showClass()">Lớp học</button>
-            <button onclick="toggleExtraButtons()">Thành viên</button>
-            <div id="extraBtns" class="extra-buttons" style="display: none;">
-                <button>Học sinh</button>
-                <button>Giảng viên</button>
-            </div>
+            <button onclick="showStudent()">Học sinh</button>
+            <button>Giảng viên</button>
             <% break; case 'teacher' : %>
                 <button onclick="showSubject()">Môn học</button>
                 <% break; case 'student' : %>

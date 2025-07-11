@@ -8,6 +8,7 @@ const accountRouter = require('./routers/account');
 const scoreRouter = require('./routers/score');
 const classRouter = require('./routers/class');
 const { checkLogin } = require('./middlewave/auth');
+const studentRouter = require('./routers/student');
 const PORT = process.env.PORT
 
 app.set('view engine', 'ejs');
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use('/account', accountRouter);
 app.use('/score', scoreRouter);
 app.use('/class', classRouter);
+app.use('/student', studentRouter);
 
 app.get('/', checkLogin, (req, res, next) => {
     res.render('home', { 'data': req.data });

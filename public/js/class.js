@@ -23,16 +23,18 @@ function showClass() {
         response.forEach(res => {
             const row = `
           <tr>
-            <td id="col">${i}</td>
-            <td>${res.name}</td>
+            <td id="col"  style="${res.isDelete ? 'opacity: 0.5;' : ''}">${i}</td>
+            <td  style="${res.isDelete ? 'opacity: 0.5;' : ''}">${res.name}</td>
             <td id="col">
-            <button id="btn-check" onclick="updateClass(this, ${res.id})">Cập nhật</button>
+            
             ${res.isDelete ?
-                    `<button id="btn-check" onclick="cancelDeleteSoftClass(${res.id})">Huỷ xoá mềm</button>`
+                    `<button id="btn-check" onclick="cancelDeleteSoftClass(${res.id})">Khôi phục</button>`
                     :
-                    `<button id="btn-check" onclick="deleteSoftClass(${res.id})">Xoá mềm</button>`
+                    `<button id="btn-check" onclick="updateClass(this, ${res.id})">Cập nhật</button>
+                    <button id="btn-check" onclick="deleteSoftClass(${res.id})">Xoá mềm</button>
+                    <button id="btn-check" onclick="deleteHardClass(${res.id})">Xoá cứng</button>`
                 }
-            <button id="btn-check" onclick="deleteHardClass(${res.id})">Xoá cứng</button>
+            
             </td>
           </tr>`;
             i++;
