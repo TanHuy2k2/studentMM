@@ -6,7 +6,7 @@
     <title>home</title>
     <link rel="stylesheet" href="/public/css/home.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="/public/js/home.js"></script>
+    <script src="/public/js/subject.js"></script>
     <script src="/public/js/class.js"></script>
     <script src="/public/js/score.js"></script>
     <script src="/public/js/student.js"></script>
@@ -20,9 +20,9 @@
         <% switch (data.role) { case 'admin' : %>
             <button onclick="showClass()">Lớp học</button>
             <button onclick="showStudent()">Học sinh</button>
-            <button>Giảng viên</button>
+            <button onclick="showSubject()">Môn học</button>
             <% break; case 'teacher' : %>
-                <button onclick="showSubject()">Môn học</button>
+                <button onclick="showSubjectTeacher()">Môn học</button>
                 <% break; case 'student' : %>
                     <button onclick="showScore()">Kết quả học tập</button>
                     <% break; } %>
@@ -56,5 +56,22 @@
         </div>
     </div>
 </body>
+<script>
+    function logout() {
+        $.ajax({
+            url: '/account/logout',
+            type: 'GET',
+        }).then(response => {
+            if (response.success) {
+                alert("Đăng xuất thành công!");
+                window.location.href = "/";
+            } else {
+                alert("Đăng xuất thất bại!");
+            }
+        }).catch(error => {
+            alert("Đã xảy ra lỗi khi đăng xuất.");
+        });
+    }
+</script>
 
 </html>

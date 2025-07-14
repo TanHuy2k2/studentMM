@@ -1,7 +1,7 @@
 const query = require('./db');
 
 const Account = {
-    check_username: (email) => {
+    checkUsername: (email) => {
         const sql = 'SELECT * FROM accounts WHERE email = ? LIMIT 1';
         return query(sql, [email]);
     },
@@ -12,12 +12,12 @@ const Account = {
             .then((result) => ({ success: true, id: result.insertId }));
     },
 
-    get_account_by_id: (id) => {
+    getAccountById: (id) => {
         const sql = 'SELECT * FROM accounts WHERE id = ? LIMIT 1';
         return query(sql, [id]);
     },
 
-    get_student_by_account: (acc_id) => {
+    getStudentByAccount: (acc_id) => {
         const sql = `SELECT ac.role, ac.name, st.id, st.class_id 
                     FROM student.accounts ac
                     INNER JOIN student.students st
@@ -26,13 +26,24 @@ const Account = {
         return query(sql, [acc_id]);
     },
 
-    get_teacher_by_account: (acc_id) => {
+    getTeacherByAccount: (acc_id) => {
         const sql = `SELECT ac.role, ac.name, tc.id
                     FROM student.accounts ac
                     INNER JOIN student.teacher tc
                     ON ac.id = tc.account_id
                     WHERE ac.id = ? LIMIT 1`;
         return query(sql, [acc_id]);
+    },
+
+    updateAccount: (acc_id, name, email, image) => {
+        const sql = `UPDATE student.accounts
+                    SET name=?, email=?, image=? where id=?`;
+        return query(sql, [name, email, image, acc_id]).then(() => ({ success: true }));
+    },
+
+    deleteAccount: (acc_id) => {
+        const sql = `DELETE FROM student.accounts where id=?`;
+        return query(sql, [acc_id]).then(() => ({ success: true }));
     }
 };
 

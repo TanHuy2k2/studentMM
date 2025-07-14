@@ -15,7 +15,7 @@ function showClass() {
     </table>`;
 
     $.ajax({
-        url: '/class/get_all_class',
+        url: '/class/get-all-class',
         type: 'GET',
     }).then(response => {
         const tbody = document.getElementById('scoreBody');
@@ -52,7 +52,7 @@ function addCLass() {
       <label>Tên lớp học:</label>
       <input type="text" id="className" placeholder="Nhập tên lớp học" required>
     </div>
-    <button class="submit-btn" onclick="saveClass()">Submit</button>`;
+    <button class="submit-btn" onclick="saveClass()">Thêm</button>`;
 }
 
 function saveClass() {
@@ -63,7 +63,7 @@ function saveClass() {
     }
 
     $.ajax({
-        url: '/class/add_class',
+        url: '/class/add-class',
         type: 'POST',
         data: {
             class_name: className,
@@ -86,7 +86,7 @@ function updateClass(button, class_id) {
     const value = cell.textContent.trim();
     cell.innerHTML = `<input type="text" value="${value}" style="width: 100px;" required>`;
 
-    button.textContent = "Save";
+    button.textContent = "Lưu";
     button.onclick = function () {
         saveClassEdit(this, class_id);
     };
@@ -102,7 +102,7 @@ function saveClassEdit(button, class_id) {
     }
 
     $.ajax({
-        url: '/class/update_class',
+        url: '/class/update-class',
         type: 'PATCH',
         data: {
             class_id: class_id,
@@ -113,7 +113,7 @@ function saveClassEdit(button, class_id) {
             alert("Cập nhật lớp học thành công!");
             showClass();
 
-            button.textContent = "Update";
+            button.textContent = "Cập nhật";
             button.onclick = function () {
                 updateClass(this, class_id);
             };
@@ -127,7 +127,7 @@ function saveClassEdit(button, class_id) {
 
 function deleteSoftClass(class_id) {
     $.ajax({
-        url: '/class/delete_soft_class',
+        url: '/class/delete-soft-class',
         type: 'PATCH',
         data: {
             class_id: class_id,
@@ -146,7 +146,7 @@ function deleteSoftClass(class_id) {
 
 function cancelDeleteSoftClass(class_id) {
     $.ajax({
-        url: '/class/cancel_delete_soft_class',
+        url: '/class/cancel-delete-soft-class',
         type: 'PATCH',
         data: {
             class_id: class_id,
@@ -169,7 +169,7 @@ function deleteHardClass(class_id) {
     }
 
     $.ajax({
-        url: '/class/delete_hard_class',
+        url: '/class/delete-hard-class',
         type: 'DELETE',
         data: {
             class_id: class_id,

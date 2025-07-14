@@ -16,7 +16,7 @@ function showScore() {
     </table>`;
 
   $.ajax({
-    url: '/score/get_score',
+    url: '/score/get-score',
     type: 'GET',
     data: {
       student_id: $('#ID').val(),
@@ -62,7 +62,7 @@ function showStudentScore(subject_id) {
     </table>`;
 
   $.ajax({
-    url: '/score/get_student_score',
+    url: '/score/get-student-score',
     type: 'GET',
     data: {
       subject_id: subject_id,
@@ -109,13 +109,14 @@ function saveScore(button, subject_id, student_id) {
   const attendance = row.cells[2].querySelector("input").value;
   const midterm = row.cells[3].querySelector("input").value;
   const final = row.cells[4].querySelector("input").value;
-  row.cells[5].textContent = total;
+  const total = ((parseFloat(attendance) + parseFloat(midterm) + parseFloat(final)) / 3).toFixed(2);
   row.cells[2].textContent = attendance;
   row.cells[3].textContent = midterm;
   row.cells[4].textContent = final;
+  row.cells[5].textContent = total;
 
   $.ajax({
-    url: '/score/update_score',
+    url: '/score/update-score',
     type: 'PATCH',
     data: {
       subject_id: subject_id,

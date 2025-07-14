@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const account = require('../models/account');
-const first = require('../array_processing/first');
+const accountModel = require('../models/account');
+const { first } = require('../common/process/array/first');
 
 const checkLogin = async (req, res, next) => {
     try {
@@ -12,14 +12,14 @@ const checkLogin = async (req, res, next) => {
 
         const cert = fs.readFileSync('./key/publicKey.crt');
         const decoded = jwt.verify(token, cert, { algorithms: ['RS256'] });
-        const result = await account.get_account_by_id(decoded.id);
+        const result = await accountModel.getAccountById(decoded.id);
         if (!result.length) {
             return res.status(403).json({ success: false });
         }
 
         switch (first(result).role) {
             case 'student':
-                const studentInfo = await account.get_student_by_account(first(result).id);
+                const studentInfo = await accountModel.getStudentByAccount(first(result).id);
                 if (studentInfo.length > 0) {
                     req.data = first(studentInfo);
                 } else {
@@ -28,7 +28,7 @@ const checkLogin = async (req, res, next) => {
                 break;
 
             case 'teacher':
-                const teacherInfo = await account.get_teacher_by_account(first(result).id);
+                const teacherInfo = await accountModel.getTeacherByAccount(first(result).id);
                 if (teacherInfo.length > 0) {
                     req.data = first(teacherInfo);
                 } else {

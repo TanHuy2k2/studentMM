@@ -1,0 +1,90 @@
+const accountModel = require('../models/account');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const bcrypt = require('bcrypt');
+const path = require('path');
+const { SALT_ROUNDS } = require('../common/contants/contant');
+const { first } = require('../common/process/array/first');
+
+exports.register = async (req, res) => {
+    const { name, email, password, role } = req.body;
+    const imagePath = `/images/${req.file.filename}`;
+    const fullPath = path.join(__dirname, '../public', imagePath);
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+    try {
+        const result = await accountModel.checkUsername(email);
+        if (result.length) {
+            fs.unlink(fullPath, () => { });
+            return res.json({ success: false, message: 'Email already exists' });
+        }
+
+        const registerResult = await accountModel.register(name, email, hashedPassword, role, imagePath);
+        return res.json(registerResult);
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+exports.login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const result = await accountModel.checkUsername(email);
+        if (!result.length) {
+            return res.json({ success: false });
+        }
+
+        const isMatch = await bcrypt.compare(password, first(result).password);
+        if (!isMatch) {
+            return res.json({ success: false });
+        }
+
+        const privateKey = fs.readFileSync('./key/privateKey.pem');
+        const token = jwt.sign({ id: first(result).id }, privateKey, { algorithm: 'RS256', expiresIn: '3h' });
+        res.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 3 * 60 * 60 * 1000
+        });
+
+        return res.json({ 'success': true });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+}
+
+exports.update = async (req, res) => {
+    let { acc_id, name, email, image } = req.body;
+    if (req.file) {
+        image = `/images/${req.file.filename}`;
+    }
+    try {
+        const result = await accountModel.updateAccount(acc_id, name, email, image)
+        return res.json(result);
+    } catch (err) {
+        return res.status(500).json('Internal server error');
+    }
+}
+
+exports.delete = async (req, res) => {
+    const { account_id } = req.body;
+    try {
+        const result = await accountModel.deleteAccount(account_id)
+        if (result.success)
+            return res.json(result);
+        else
+            return res.status(500).json('Can not delete data');
+    } catch (err) {
+        return res.status(500).json('Internal server error');
+    }
+}
+
+exports.logout = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+    });
+    return res.status(200).json({ success: true });
+}
