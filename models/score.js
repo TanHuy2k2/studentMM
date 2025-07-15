@@ -1,15 +1,18 @@
 const query = require('./db');
 
 const Score = {
-    getScoreSubject: (student_id) => {
+    findOne: (student_id) => {
         const sql = `
             SELECT subject.name AS subject_name, 
                    score.attendance, 
                    score.midterm, 
-                   score.final
+                   score.final,
+                   ROUND(AVG((score.attendance + score.midterm + score.final) / 3), 2) AS avg_socre
             FROM student.subject
-            INNER JOIN student.score ON subject.id = score.subject_id
-            WHERE score.student_id = ?`;
+            INNER JOIN student.score
+            ON subject.id = score.subject_id
+            WHERE score.student_id = ?
+            GROUP BY subject_name, score.attendance, score.midterm, score.final;`;
         return query(sql, [student_id]);
     },
 
@@ -27,7 +30,7 @@ const Score = {
         return query(sql, [student_id]);
     },
 
-    updateScore: (subject_id, student_id, attendance, midterm, final) => {
+    update: (subject_id, student_id, attendance, midterm, final) => {
         const sql = `
             UPDATE student.score
             SET attendance = ?, midterm = ?, final = ?

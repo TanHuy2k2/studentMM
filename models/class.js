@@ -11,8 +11,8 @@ const Class = {
         return query(sql, [teacher_id]);
     },
 
-    getAllClass: () => {
-        const sql = `SELECT * FROM student.class`;
+    find: () => {
+        const sql = `SELECT * FROM student.class where isDelete = false`;
         return query(sql);
     },
 
@@ -21,12 +21,12 @@ const Class = {
         return query(sql);
     },
 
-    addClass: (class_name) => {
+    add: (class_name) => {
         const sql = `INSERT INTO student.class (name, isDelete) VALUES (?, false)`;
         return query(sql, [class_name]).then(() => ({ success: true }));
     },
 
-    updateClass: (class_id, class_name) => {
+    update: (class_id, class_name) => {
         const sql = `UPDATE student.class SET name = ? WHERE id = ?`;
         return query(sql, [class_name, class_id]).then(() => ({ success: true }));
     },
@@ -42,17 +42,12 @@ const Class = {
         });
     },
 
-    deleteSoftClass: (class_id) => {
+    softDelete: (class_id) => {
         const sql = `UPDATE student.class SET isDelete = true WHERE id = ?`;
         return query(sql, [class_id]).then(() => ({ success: true }));
     },
 
-    cancelDeleteSoftClass: (class_id) => {
-        const sql = `UPDATE student.class SET isDelete = false WHERE id = ?`;
-        return query(sql, [class_id]).then(() => ({ success: true }));
-    },
-
-    deleteHardClass: (class_id) => {
+    delete: (class_id) => {
         const sql = `DELETE FROM student.class WHERE id = ?`;
         return query(sql, [class_id]).then(() => ({ success: true }));
     }

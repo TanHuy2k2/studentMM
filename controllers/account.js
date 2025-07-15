@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const { SALT_ROUNDS } = require('../common/contants/contant');
-const { first } = require('../common/process/array/first');
+const { SALT_ROUNDS } = require('../contants/contant');
+const { first } = require('../utils/array');
 
 exports.register = async (req, res) => {
     const { name, email, password, role } = req.body;
@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     try {
-        const result = await accountModel.checkUsername(email);
+        const result = await accountModel.checkEmail(email);
         if (result.length) {
             fs.unlink(fullPath, () => { });
             return res.json({ success: false, message: 'Email already exists' });
@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const result = await accountModel.checkUsername(email);
+        const result = await accountModel.checkEmail(email);
         if (!result.length) {
             return res.json({ success: false });
         }
@@ -58,11 +58,13 @@ exports.login = async (req, res) => {
 
 exports.update = async (req, res) => {
     let { acc_id, name, email, image } = req.body;
+
     if (req.file) {
         image = `/images/${req.file.filename}`;
     }
+
     try {
-        const result = await accountModel.updateAccount(acc_id, name, email, image)
+        const result = await accountModel.update(acc_id, name, email, image)
         return res.json(result);
     } catch (err) {
         return res.status(500).json('Internal server error');
@@ -71,8 +73,9 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     const { account_id } = req.body;
+
     try {
-        const result = await accountModel.deleteAccount(account_id)
+        const result = await accountModel.delete(account_id)
         if (result.success)
             return res.json(result);
         else

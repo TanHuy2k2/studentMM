@@ -2,20 +2,25 @@ const express = require('express');
 const classRouter = express.Router();
 const classController = require('../controllers/class');
 
-classRouter.get('/get-subject-teacher', classController.getSubjectTeacher)
+// Route to get subjects assigned to a specific teacher (by teacher ID)
+classRouter.get('/get-subject-teacher', classController.getSubjectByTeacherId)
 
-classRouter.get('/get-all-class', classController.getAllClass)
+// Route to get all class data
+classRouter.get('/find', classController.find)
 
+// Route to get available classes for register
 classRouter.get('/get-class-for-register', classController.getClassForRegister)
 
-classRouter.post('/add-class', classController.addClass)
+// Route to add a new class
+classRouter.post('/add', classController.add)
 
-classRouter.patch('/update-class', classController.updateClass)
+// Route to update class information
+classRouter.patch('/update', classController.update)
 
-classRouter.patch('/delete-soft-class', classController.deleteSoftClass)
+// Route to perform soft delete on a class
+classRouter.patch('/soft-delete', classController.softDelete)
 
-classRouter.patch('/cancel-delete-soft-class', classController.cancelDeleteSoftClass)
-
-classRouter.delete('/delete-hard-class', classController.deleteHardClass)
+// Route to permanently delete a class from the database
+classRouter.delete('/delete', classController.delete)
 
 module.exports = classRouter;

@@ -18,7 +18,7 @@ function showStudent() {
     </table>`;
 
   $.ajax({
-    url: '/student/get-all-students',
+    url: '/student/find',
     type: 'GET',
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
@@ -118,7 +118,7 @@ async function saveStudent() {
     }
 
     const response_add = await $.ajax({
-      url: '/student/add-student',
+      url: '/student/add',
       type: 'POST',
       data: { account_id: response_register.id, class_id: classId },
     });
@@ -197,7 +197,7 @@ async function saveUpdateStudent(acc_id, student_id) {
 
   try {
     const response_update_acc = await $.ajax({
-      url: '/account/update-account',
+      url: '/account/update',
       type: 'PATCH',
       data: formData,
       processData: false,
@@ -208,7 +208,7 @@ async function saveUpdateStudent(acc_id, student_id) {
     }
 
     const response_update_student = await $.ajax({
-      url: '/student/update-student',
+      url: '/student/update',
       type: 'PATCH',
       data: { student_id: student_id, class_id: classId },
     });
@@ -230,7 +230,7 @@ async function deleteStudent(account_id) {
 
   try {
     const response_delete_stu = await $.ajax({
-      url: '/student/delete-student',
+      url: '/student/delete',
       type: 'DELETE',
       data: { account_id: account_id },
     });
@@ -239,7 +239,7 @@ async function deleteStudent(account_id) {
     }
 
     const response_delete_acc = await $.ajax({
-      url: '/account/delete-account',
+      url: '/account/delete',
       type: 'DELETE',
       data: { account_id: account_id }
     });

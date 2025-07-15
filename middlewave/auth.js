@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const accountModel = require('../models/account');
-const { first } = require('../common/process/array/first');
+const { first } = require('../utils/array');
 
 const checkLogin = async (req, res, next) => {
     try {
@@ -12,14 +12,15 @@ const checkLogin = async (req, res, next) => {
 
         const cert = fs.readFileSync('./key/publicKey.crt');
         const decoded = jwt.verify(token, cert, { algorithms: ['RS256'] });
-        const result = await accountModel.getAccountById(decoded.id);
+        const result = await accountModel.findOne(decoded.id);
         if (!result.length) {
             return res.status(403).json({ success: false });
         }
 
-        switch (first(result).role) {
+        const rs = first(result);
+        switch (rs.role) {
             case 'student':
-                const studentInfo = await accountModel.getStudentByAccount(first(result).id);
+                const studentInfo = await accountModel.getStudentByAccount(rs.id);
                 if (studentInfo.length > 0) {
                     req.data = first(studentInfo);
                 } else {
@@ -28,7 +29,7 @@ const checkLogin = async (req, res, next) => {
                 break;
 
             case 'teacher':
-                const teacherInfo = await accountModel.getTeacherByAccount(first(result).id);
+                const teacherInfo = await accountModel.getTeacherByAccount(rs.id);
                 if (teacherInfo.length > 0) {
                     req.data = first(teacherInfo);
                 } else {
@@ -37,7 +38,7 @@ const checkLogin = async (req, res, next) => {
                 break;
 
             default:
-                req.data = first(result);
+                req.data = rs;
         }
         next();
     } catch (err) {

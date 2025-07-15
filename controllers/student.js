@@ -1,7 +1,7 @@
 const studentModel = require('../models/student');
 
-exports.getAllStudent = (req, res, next) => {
-    studentModel.getAllStudents()
+exports.find = (req, res, next) => {
+    studentModel.find()
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -9,9 +9,10 @@ exports.getAllStudent = (req, res, next) => {
         });
 }
 
-exports.addStudent = (req, res, next) => {
+exports.add = (req, res, next) => {
     const { account_id, class_id } = req.body;
-    studentModel.addStudent(account_id, class_id)
+
+    studentModel.add(account_id, class_id)
         .then((result) => {
             return res.json({ success: true });
         }).catch((err) => {
@@ -19,9 +20,10 @@ exports.addStudent = (req, res, next) => {
         });
 }
 
-exports.updateStudent = (req, res, next) => {
+exports.update = (req, res, next) => {
     const { student_id, class_id } = req.body;
-    studentModel.updateStudent(student_id, class_id)
+
+    studentModel.update(student_id, class_id)
         .then((result) => {
             if (result.success)
                 return res.json(result);
@@ -32,9 +34,10 @@ exports.updateStudent = (req, res, next) => {
         });
 }
 
-exports.deleteStudent = (req, res, next) => {
+exports.delete = (req, res, next) => {
     const { account_id } = req.body;
-    studentModel.deleteStudent(account_id)
+
+    studentModel.delete(account_id)
         .then((result) => {
             if (result.success)
                 return res.json(result);

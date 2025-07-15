@@ -1,6 +1,6 @@
 const classModel = require('../models/class');
 
-exports.getSubjectTeacher = (req, res, next) => {
+exports.getSubjectByTeacherId = (req, res, next) => {
     classModel.getSubjectByTeacherId(req.query.teacher_id)
         .then((result) => {
             return res.json(result);
@@ -9,8 +9,8 @@ exports.getSubjectTeacher = (req, res, next) => {
         });
 }
 
-exports.getAllClass = (req, res, next) => {
-    classModel.getAllClass()
+exports.find = (req, res, next) => {
+    classModel.find()
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -27,7 +27,7 @@ exports.getClassForRegister = (req, res, next) => {
         });
 }
 
-exports.addClass = async (req, res, next) => {
+exports.add = async (req, res, next) => {
     const { class_name } = req.body;
 
     try {
@@ -36,14 +36,14 @@ exports.addClass = async (req, res, next) => {
             return res.json({ success: false });
         }
 
-        const result = await classModel.addClass(class_name);
+        const result = await classModel.add(class_name);
         return res.json(result);
     } catch (err) {
         return res.status(500).json('Internal server error');
     }
 }
 
-exports.updateClass = async (req, res, next) => {
+exports.update = async (req, res, next) => {
     const { class_id, class_name } = req.body;
     try {
         const checkResult = await classModel.checkClass(class_name);
@@ -51,16 +51,16 @@ exports.updateClass = async (req, res, next) => {
             return res.json({ success: false });
         }
 
-        const result = await classModel.updateClass(class_id, class_name)
+        const result = await classModel.update(class_id, class_name)
         return res.json(result);
     } catch (err) {
         return res.status(500).json('Internal server error');
     }
 }
 
-exports.deleteSoftClass = (req, res, next) => {
+exports.softDelete = (req, res, next) => {
     const { class_id } = req.body;
-    classModel.deleteSoftClass(class_id)
+    classModel.softDelete(class_id)
         .then((result) => {
             return res.json(result);
         })
@@ -69,20 +69,9 @@ exports.deleteSoftClass = (req, res, next) => {
         });
 }
 
-exports.cancelDeleteSoftClass = (req, res, next) => {
+exports.delete = (req, res, next) => {
     const { class_id } = req.body;
-    classModel.cancelDeleteSoftClass(class_id)
-        .then((result) => {
-            return res.json(result);
-        })
-        .catch((err) => {
-            return res.status(500).json('Internal server error');
-        });
-}
-
-exports.deleteHardClass = (req, res, next) => {
-    const { class_id } = req.body;
-    classModel.deleteHardClass(class_id)
+    classModel.delete(class_id)
         .then((result) => {
             return res.json(result);
         })

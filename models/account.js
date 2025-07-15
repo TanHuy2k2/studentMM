@@ -1,7 +1,7 @@
 const query = require('./db');
 
 const Account = {
-    checkUsername: (email) => {
+    checkEmail: (email) => {
         const sql = 'SELECT * FROM accounts WHERE email = ? LIMIT 1';
         return query(sql, [email]);
     },
@@ -12,7 +12,7 @@ const Account = {
             .then((result) => ({ success: true, id: result.insertId }));
     },
 
-    getAccountById: (id) => {
+    findOne: (id) => {
         const sql = 'SELECT * FROM accounts WHERE id = ? LIMIT 1';
         return query(sql, [id]);
     },
@@ -35,13 +35,13 @@ const Account = {
         return query(sql, [acc_id]);
     },
 
-    updateAccount: (acc_id, name, email, image) => {
+    update: (acc_id, name, email, image) => {
         const sql = `UPDATE student.accounts
                     SET name=?, email=?, image=? where id=?`;
         return query(sql, [name, email, image, acc_id]).then(() => ({ success: true }));
     },
 
-    deleteAccount: (acc_id) => {
+    delete: (acc_id) => {
         const sql = `DELETE FROM student.accounts where id=?`;
         return query(sql, [acc_id]).then(() => ({ success: true }));
     }

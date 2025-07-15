@@ -15,7 +15,7 @@ function showClass() {
     </table>`;
 
     $.ajax({
-        url: '/class/get-all-class',
+        url: '/class/find',
         type: 'GET',
     }).then(response => {
         const tbody = document.getElementById('scoreBody');
@@ -23,18 +23,12 @@ function showClass() {
         response.forEach(res => {
             const row = `
           <tr>
-            <td id="col"  style="${res.isDelete ? 'opacity: 0.5;' : ''}">${i}</td>
-            <td  style="${res.isDelete ? 'opacity: 0.5;' : ''}">${res.name}</td>
+            <td id="col">${i}</td>
+            <td>${res.name}</td>
             <td id="col">
-            
-            ${res.isDelete ?
-                    `<button id="btn-check" onclick="cancelDeleteSoftClass(${res.id})">Khôi phục</button>`
-                    :
-                    `<button id="btn-check" onclick="updateClass(this, ${res.id})">Cập nhật</button>
-                    <button id="btn-check" onclick="deleteSoftClass(${res.id})">Xoá mềm</button>
-                    <button id="btn-check" onclick="deleteHardClass(${res.id})">Xoá cứng</button>`
-                }
-            
+                <button id="btn-check" onclick="updateClass(this, ${res.id})">Cập nhật</button>
+                <button id="btn-check" onclick="deleteSoftClass(${res.id})">Xoá mềm</button>
+                <button id="btn-check" onclick="deleteHardClass(${res.id})">Xoá</button>
             </td>
           </tr>`;
             i++;
@@ -63,7 +57,7 @@ function saveClass() {
     }
 
     $.ajax({
-        url: '/class/add-class',
+        url: '/class/add',
         type: 'POST',
         data: {
             class_name: className,
@@ -73,7 +67,7 @@ function saveClass() {
             alert("Thêm lớp học thành công!");
             showClass();
         } else {
-            alert("Thêm lớp học thất bại!");
+            alert("Đã có lớp này");
         }
     }).catch(error => {
         alert("Đã xảy ra lỗi khi thêm lớp học.");
@@ -102,7 +96,7 @@ function saveClassEdit(button, class_id) {
     }
 
     $.ajax({
-        url: '/class/update-class',
+        url: '/class/update',
         type: 'PATCH',
         data: {
             class_id: class_id,
@@ -127,7 +121,7 @@ function saveClassEdit(button, class_id) {
 
 function deleteSoftClass(class_id) {
     $.ajax({
-        url: '/class/delete-soft-class',
+        url: '/class/soft-delete',
         type: 'PATCH',
         data: {
             class_id: class_id,
@@ -144,32 +138,13 @@ function deleteSoftClass(class_id) {
     });
 }
 
-function cancelDeleteSoftClass(class_id) {
-    $.ajax({
-        url: '/class/cancel-delete-soft-class',
-        type: 'PATCH',
-        data: {
-            class_id: class_id,
-        }
-    }).then(response => {
-        if (response.success) {
-            alert("Huỷ xoá mềm lớp học thành công!");
-            showClass();
-        } else {
-            alert("Xoá mềm lớp học thất bại!");
-        }
-    }).catch(error => {
-        alert("Đã xảy ra lỗi khi xoá mềm lớp học.");
-    });
-}
-
 function deleteHardClass(class_id) {
     if (!confirm("Bạn có chắc chắn muốn xoá lớp học này?")) {
         return;
     }
 
     $.ajax({
-        url: '/class/delete-hard-class',
+        url: '/class/delete',
         type: 'DELETE',
         data: {
             class_id: class_id,

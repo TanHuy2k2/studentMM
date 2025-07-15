@@ -1,7 +1,7 @@
 const query = require('./db');
 
 const Student = {
-    getAllStudents: () => {
+    find: () => {
         const sql = `
             SELECT a.id AS acc_id, st.id AS student_id, a.name, a.image, a.email, c.name AS class_name,
             COALESCE(ROUND(AVG((s.attendance + s.midterm + s.final) / 3), 2), 0) AS gpa
@@ -16,21 +16,21 @@ const Student = {
         return query(sql);
     },
 
-    addStudent: (account_id, class_id) => {
+    add: (account_id, class_id) => {
         const sql = `
             INSERT INTO student.students (account_id, class_id)
             VALUES (?, ?);`;
         return query(sql, [account_id, class_id]);
     },
 
-    updateStudent: (student_id, class_id) => {
+    update: (student_id, class_id) => {
         const sql = `
             UPDATE student.students
             SET class_id=? where id=?`;
         return query(sql, [class_id, student_id]).then(() => ({ success: true }));
     },
 
-    deleteStudent: (account_id) => {
+    delete: (account_id) => {
         const sql = `
         DELETE FROM student.students where account_id = ?`;
         return query(sql, [account_id]).then(() => ({ success: true }));

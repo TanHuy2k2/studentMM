@@ -12,14 +12,19 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+// Route to register a new account, with image upload support
 accountRouter.post('/register', upload.single('image'), accountController.register);
 
+// Route to handle user login
 accountRouter.post('/login', accountController.login);
 
-accountRouter.patch('/update-account', upload.single('image'), accountController.update);
+// Route to update account information, with optional new image upload
+accountRouter.patch('/update', upload.single('image'), accountController.update);
 
-accountRouter.delete('/delete-account', accountController.delete);
+// Route to delete an account
+accountRouter.delete('/delete', accountController.delete);
 
+// Route to log out the current user
 accountRouter.get('/logout', accountController.logout);
 
 module.exports = accountRouter;

@@ -16,7 +16,7 @@ function showScore() {
     </table>`;
 
   $.ajax({
-    url: '/score/get-score',
+    url: '/score/find-one',
     type: 'GET',
     data: {
       student_id: $('#ID').val(),
@@ -25,15 +25,13 @@ function showScore() {
     const tbody = document.getElementById('scoreBody');
 
     response.forEach(score => {
-      const total = ((score.attendance + score.midterm + score.final) / 3).toFixed(2);
-
       const row = `
           <tr>
             <td>${score.subject_name}</td>
             <td id="col">${score.attendance}</td>
             <td id="col">${score.midterm}</td>
             <td id="col">${score.final}</td>
-            <td id="col">${total}</td>
+            <td id="col">${score.avg_socre}</td>
           </tr>`;
       tbody.innerHTML += row;
     });
@@ -116,7 +114,7 @@ function saveScore(button, subject_id, student_id) {
   row.cells[5].textContent = total;
 
   $.ajax({
-    url: '/score/update-score',
+    url: '/score/update',
     type: 'PATCH',
     data: {
       subject_id: subject_id,

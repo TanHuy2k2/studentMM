@@ -2,12 +2,16 @@ const express = require('express');
 const studentRouter = express.Router();
 const studentController = require('../controllers/student');
 
-studentRouter.get('/get-all-students', studentController.getAllStudent);
+// Route to get all data students
+studentRouter.get('/find', studentController.find);
 
-studentRouter.post('/add-student', studentController.addStudent);
+// Route to add new student
+studentRouter.post('/add', studentController.add);
 
-studentRouter.patch('/update-student', studentController.updateStudent);
+// Route to update student infomation
+studentRouter.patch('/update', studentController.update);
 
-studentRouter.delete('/delete-student', studentController.deleteStudent);
+// Route to delete student by student id
+studentRouter.delete('/delete', studentController.delete);
 
 module.exports = studentRouter;
