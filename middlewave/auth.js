@@ -12,37 +12,37 @@ const checkLogin = async (req, res, next) => {
 
         const cert = fs.readFileSync('./key/publicKey.crt');
         const decoded = jwt.verify(token, cert, { algorithms: ['RS256'] });
-        const result = await accountModel.findOne(decoded.id);
-        if (!result.length) {
-            return res.status(403).json({ success: false });
+        const account = await accountModel.findOne(decoded.id);
+        if (account.error) {
+            return res.status(400).json({ success: false, errors: account.error });
         }
 
-        const rs = first(result);
-        switch (rs.role) {
+        const firstAccount = first(account);
+        switch (firstAccount.role) {
             case 'student':
-                const studentInfo = await accountModel.getStudentByAccount(rs.id);
+                const studentInfo = await accountModel.getStudentByAccount(firstAccount.id);
                 if (studentInfo.length > 0) {
                     req.data = first(studentInfo);
                 } else {
-                    return res.status(403).json({ success: false });
+                    return res.status(400).json({ success: false, errors: "Cannot get student" });
                 }
                 break;
 
             case 'teacher':
-                const teacherInfo = await accountModel.getTeacherByAccount(rs.id);
+                const teacherInfo = await accountModel.getTeacherByAccount(firstAccount.id);
                 if (teacherInfo.length > 0) {
                     req.data = first(teacherInfo);
                 } else {
-                    return res.status(403).json({ success: false });
+                    return res.status(400).json({ success: false, errors: "Cannot get student" });
                 }
                 break;
 
             default:
-                req.data = rs;
+                req.data = firstAccount;
         }
         next();
     } catch (err) {
-        return res.status(401).json({
+        return res.status(400).json({
             success: false,
             error: err.message || 'Unauthorized'
         });

@@ -10,6 +10,7 @@
     <script src="/public/js/class.js"></script>
     <script src="/public/js/score.js"></script>
     <script src="/public/js/student.js"></script>
+    <script src="/public/js/teacher.js"></script>
 </head>
 
 <body>
@@ -20,11 +21,13 @@
         <% switch (data.role) { case 'admin' : %>
             <button onclick="showClass()">Lớp học</button>
             <button onclick="showStudent()">Học sinh</button>
+            <button onclick="showTeacher()">Giáo viên</button>
             <button onclick="showSubject()">Môn học</button>
             <% break; case 'teacher' : %>
                 <button onclick="showSubjectTeacher()">Môn học</button>
                 <% break; case 'student' : %>
                     <button onclick="showScore()">Kết quả học tập</button>
+                    <button onclick="">Đăng kí môn học</button>
                     <% break; } %>
     </div>
 

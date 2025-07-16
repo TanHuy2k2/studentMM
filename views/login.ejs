@@ -50,11 +50,10 @@
                 console.log('Login successful');
                 window.location.href = '/';
             } else {
-                alert('Invalid username or password');
+                alert("Invalid email or password");
             }
         }).catch((error) => {
-            console.error('Error:', error);
-            alert('An error occurred while logging in.');
+            alert(error['responseJSON']['error'].msg);
         });
     }
 </script>

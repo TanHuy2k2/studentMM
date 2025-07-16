@@ -108,10 +108,6 @@ function saveScore(button, subject_id, student_id) {
   const midterm = row.cells[3].querySelector("input").value;
   const final = row.cells[4].querySelector("input").value;
   const total = ((parseFloat(attendance) + parseFloat(midterm) + parseFloat(final)) / 3).toFixed(2);
-  row.cells[2].textContent = attendance;
-  row.cells[3].textContent = midterm;
-  row.cells[4].textContent = final;
-  row.cells[5].textContent = total;
 
   $.ajax({
     url: '/score/update',
@@ -126,11 +122,16 @@ function saveScore(button, subject_id, student_id) {
   }).then(data => {
     alert("Cập nhật thành công!");
 
+    row.cells[2].textContent = attendance;
+    row.cells[3].textContent = midterm;
+    row.cells[4].textContent = final;
+    row.cells[5].textContent = total;
+
     button.textContent = "Edit";
     button.onclick = function () {
       editScore(this, subject_id, student_id);
     };
   }).catch(err => {
-    alert("Lỗi khi lưu dữ liệu!");
+    alert(err['responseJSON']['error'].msg);
   });
 }

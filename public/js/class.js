@@ -115,7 +115,7 @@ function saveClassEdit(button, class_id) {
             alert("Thêm lớp học thất bại!");
         }
     }).catch(error => {
-        alert("Đã xảy ra lỗi khi cập nhật lớp học.");
+        alert(error['responseJSON']['error'].msg);
     });
 }
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const classRouter = express.Router();
 const classController = require('../controllers/class');
+const { validateClassName } = require('../middlewave/validate/class');
 
 // Route to get subjects assigned to a specific teacher (by teacher ID)
 classRouter.get('/get-subject-teacher', classController.getSubjectByTeacherId)
@@ -12,10 +13,10 @@ classRouter.get('/find', classController.find)
 classRouter.get('/get-class-for-register', classController.getClassForRegister)
 
 // Route to add a new class
-classRouter.post('/add', classController.add)
+classRouter.post('/add', validateClassName, classController.add)
 
 // Route to update class information
-classRouter.patch('/update', classController.update)
+classRouter.patch('/update', validateClassName, classController.update)
 
 // Route to perform soft delete on a class
 classRouter.patch('/soft-delete', classController.softDelete)

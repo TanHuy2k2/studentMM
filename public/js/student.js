@@ -57,8 +57,8 @@ function addStudent() {
       <input type="email" id="studentEmail" placeholder="Nhập email" required>
     </div>
     <div class="form-group">
-      <label>Password:</label>
-      <input type="password" id="studentPassword" placeholder="Nhập password" required>
+      <label>Mật khẩu:</label>
+      <input type="password" id="studentPassword" placeholder="Nhập mật khẩu" required>
     </div>
     <div class="form-group">
       <label>Lớp học:</label>
@@ -129,7 +129,7 @@ async function saveStudent() {
     alert('Thêm học sinh thành công!');
     showStudent();
   } catch (error) {
-    alert('Không thể thêm học sinh. Vui lòng thử lại sau.');
+    alert(error['responseJSON']['error'].msg);
   }
 }
 
@@ -219,7 +219,7 @@ async function saveUpdateStudent(acc_id, student_id) {
     alert('Cập nhật thông tin thành công!');
     showStudent();
   } catch (error) {
-    alert('Không thể thêm học sinh. Vui lòng thử lại sau.');
+    alert(error['responseJSON']['error'].msg);
   }
 }
 
