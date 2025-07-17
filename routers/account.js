@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
-const { validateRegister, validateLogin, validateUpdate } = require('../middlewave/validate/account');
+const { validateRegister, validateLogin, validateUpdate, validateDelete } = require('../middlewave/validate/account');
 
 // Route to register a new account, with image upload support
 accountRouter.post('/register', upload.single('image'), validateRegister, accountController.register);
@@ -23,7 +23,7 @@ accountRouter.post('/login', validateLogin, accountController.login);
 accountRouter.patch('/update', upload.single('image'), validateUpdate, accountController.update);
 
 // Route to delete an account
-accountRouter.delete('/delete', accountController.delete);
+accountRouter.delete('/delete', validateDelete, accountController.delete);
 
 // Route to log out the current user
 accountRouter.get('/logout', accountController.logout);

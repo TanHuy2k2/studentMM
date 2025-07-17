@@ -1,4 +1,4 @@
-function showStudent() {
+function showStudent(page = 1) {
   document.getElementById('mainContent').innerHTML = `
     <button id="btn-check" style="float: right;" onclick="addStudent()">Thêm học sinh</button>
     <table border="1">
@@ -18,12 +18,12 @@ function showStudent() {
     </table>`;
 
   $.ajax({
-    url: '/student/find',
+    url: `/student/find?page=${page}`,
     type: 'GET',
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
     let i = 1;
-    response.forEach(res => {
+    response['result'].forEach(res => {
       const row = `
           <tr>
             <td id="col">${i}</td>
@@ -40,9 +40,14 @@ function showStudent() {
       i++;
       tbody.innerHTML += row;
     });
+    document.getElementById('pagging').style.display = 'block';
   }).catch(error => {
     document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách học sinh. Vui lòng thử lại sau.</p>`;
   });
+}
+
+function hidePagging() {
+  document.getElementById('pagging').style.display = 'none';
 }
 
 function addStudent() {
@@ -250,6 +255,27 @@ async function deleteStudent(account_id) {
     alert('Xoá học sinh thành công!');
     showStudent();
   } catch (error) {
-    alert('Không thể xoá học sinh. Vui lòng thử lại sau.');
+    alert(error['responseJSON']['error'].msg);
   }
 }
+
+$(document).ready(function () {
+  $('#pagging').pagination({
+    dataSource: '/student/find?page=1',
+    locator: 'result',
+    totalNumberLocator: function (response) {
+      return response.total;
+    },
+    pageSize: 5,
+
+    afterPageOnClick: function (event, pageNumber) {
+      showStudent(pageNumber);
+    },
+    afterPreviousOnClick: function (event, pageNumber) {
+      showStudent(pageNumber);
+    },
+    afterNextOnClick: function (event, pageNumber) {
+      showStudent(pageNumber);
+    },
+  })
+});

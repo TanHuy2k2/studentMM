@@ -1,4 +1,5 @@
 function showClass() {
+    hidePagging();
     document.getElementById('mainContent').innerHTML = `
     <h1>Lớp học</h1>
     <button id="btn-check" style="float: right;" onclick="addCLass()">Thêm lớp học</button>

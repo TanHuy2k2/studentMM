@@ -1,7 +1,9 @@
 const classModel = require('../models/class');
 
 exports.getSubjectByTeacherId = (req, res, next) => {
-    classModel.getSubjectByTeacherId(req.query.teacher_id)
+    const { teacher_id } = req.query;
+
+    classModel.getSubjectByTeacherId(teacher_id)
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -45,6 +47,7 @@ exports.add = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     const { class_id, class_name } = req.body;
+
     try {
         const checkResult = await classModel.checkClass(class_name);
         if (checkResult.exists) {
@@ -60,6 +63,7 @@ exports.update = async (req, res, next) => {
 
 exports.softDelete = (req, res, next) => {
     const { class_id } = req.body;
+
     classModel.softDelete(class_id)
         .then((result) => {
             return res.json(result);
@@ -71,6 +75,7 @@ exports.softDelete = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
     const { class_id } = req.body;
+
     classModel.delete(class_id)
         .then((result) => {
             return res.json(result);

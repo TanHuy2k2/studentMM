@@ -16,6 +16,12 @@ const Score = {
         return query(sql, [student_id]);
     },
 
+    add: (student_id, subject_id) => {
+        const sql = `INSERT INTO student.score(student_id, subject_id, attendance, midterm, final)
+                    VALUES (?,?,0,0,0)`;
+        return query(sql, [student_id, subject_id]).then(() => ({ success: true }));
+    },
+
     getStudentScore: (student_id) => {
         const sql = `
             SELECT st.id AS student_id, acc.name, sc.attendance, sc.midterm, sc.final,

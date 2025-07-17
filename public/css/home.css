@@ -9,7 +9,7 @@ body {
 }
 
 .sidebar {
-    width: 200px;
+    width: 17%;
     background-color: #1f2a40;
     color: white;
     height: 100vh;
@@ -59,7 +59,8 @@ body {
 }
 
 .main {
-    flex-grow: 1;
+    flex-grow: 2;
+    width: 100%;
     padding: 20px;
 }
 

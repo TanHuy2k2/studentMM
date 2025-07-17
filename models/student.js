@@ -1,7 +1,13 @@
 const query = require('./db');
 
 const Student = {
-    find: () => {
+    totalStudents: () => {
+        const sql = ` SELECT * FROM student.students`;
+        return query(sql).then((result) => result.length);
+    },
+
+    find: (page, pageSize) => {
+        const skipNumber = (parseInt(page) - 1) * pageSize;
         const sql = `
             SELECT a.id AS acc_id, st.id AS student_id, a.name, a.image, a.email, c.name AS class_name,
             COALESCE(ROUND(AVG((s.attendance + s.midterm + s.final) / 3), 2), 0) AS gpa
@@ -12,15 +18,16 @@ const Student = {
             ON st.class_id = c.id
             LEFT JOIN student.score s 
             ON st.id = s.student_id
-            GROUP BY a.id, st.id, a.name, a.image, a.email, c.name;`;
-        return query(sql);
+            GROUP BY a.id, st.id, a.name, a.image, a.email, c.name
+            LIMIT ? OFFSET ?`;
+        return query(sql, [pageSize, skipNumber]);
     },
 
     add: (account_id, class_id) => {
         const sql = `
             INSERT INTO student.students (account_id, class_id)
             VALUES (?, ?);`;
-        return query(sql, [account_id, class_id]);
+        return query(sql, [account_id, class_id]).then(() => ({ success: true }));
     },
 
     update: (student_id, class_id) => {

@@ -1,4 +1,5 @@
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { handleValidationErrors } = require('../validate/handleValidationErrors')
 
 const validateClassName = [
     body('class_name')
@@ -6,17 +7,16 @@ const validateClassName = [
         .notEmpty().withMessage('Class name is required')
         .bail(),
 
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                success: false,
-                error: errors.array()[0]
-            });
-        }
-
-        next();
-    }
+    handleValidationErrors
 ]
 
-module.exports = { validateClassName }
+const validateDelete = [
+    body('class_id')
+        .trim()
+        .notEmpty().withMessage('Cannot get class ID')
+        .isInt().withMessage('Class ID must be int'),
+
+    handleValidationErrors
+]
+
+module.exports = { validateClassName, validateDelete }

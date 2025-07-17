@@ -1,4 +1,5 @@
 function showSubjectTeacher() {
+  hidePagging();
   document.getElementById('mainContent').innerHTML = `
     <h1>Môn học</h1>
     <table border="1">
@@ -146,7 +147,7 @@ async function saveSubject() {
     alert('Thêm môn học thành công!');
     showSubject();
   } catch (error) {
-    alert('Xảy ra lỗi trong server');
+    alert(error['responseJSON']['error'].msg);
   }
 }
 
@@ -218,7 +219,7 @@ async function saveUpdate(subject_id, teacher_id) {
     alert('Cập nhật môn học thành công!');
     showSubject();
   } catch (error) {
-    alert('Xảy ra lỗi trong server');
+    alert(error['responseJSON']['error'].msg);
   }
 }
 
@@ -240,6 +241,71 @@ async function deleteSubject(subject_id) {
     alert('Xoá môn học thành công!');
     showSubject();
   } catch (error) {
-    alert('Không thể xoá môn học. Vui lòng thử lại sau.');
+    alert(error['responseJSON']['error'].msg);
+  }
+}
+
+function showSubjectForRegister() {
+  document.getElementById('mainContent').innerHTML = `
+    <h1>Môn học</h1>
+    <table border="1">
+      <thead>
+        <tr>
+          <th style="width: 10%;" id="col">#</th>
+          <th style="width: 40%;">Môn học</th>
+          <th style="width: 30%;">Giáo viên</th>
+          <th style="width: 20%;"></th>
+        </tr>
+      </thead>
+      <tbody id="scoreBody">
+      </tbody>
+    </table>`;
+
+  const student_id = $('#ID').val();
+  $.ajax({
+    url: '/subject/get-subject-for-student',
+    type: 'GET',
+    data: {
+      student_id: student_id,
+    }
+  })
+    .then(response => {
+      const tbody = document.getElementById('scoreBody');
+      let i = 1;
+      response.forEach(subject => {
+        const row = `
+          <tr>
+            <td id="col">${i}</td>
+            <td>${subject.subject_name}</td>
+            <td>${subject.teacher_name}</td>
+            <td id="col">
+              <button id="btn-check" onclick='registerSubject(${student_id}, ${subject.subject_id})'>Đăng kí</button>
+            </td>
+          </tr>
+        `;
+        i++;
+        tbody.innerHTML += row;
+      });
+    })
+    .catch(error => {
+      document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách môn học. Vui lòng thử lại sau.</p>`;
+    });
+}
+
+async function registerSubject(student_id, subject_id) {
+  try {
+    const response = await $.ajax({
+      url: '/score/add',
+      type: 'POST',
+      data: { student_id: student_id, subject_id: subject_id },
+    });
+    if (!response.success) {
+      return alert("Không thành công")
+    }
+
+    alert('Đăng kí môn học thành công!');
+    showScore();
+  } catch (error) {
+    alert(error['responseJSON']['error'].msg);
   }
 }

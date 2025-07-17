@@ -1,7 +1,20 @@
 const scoreModel = require('../models/score');
 
 exports.findOne = (req, res, next) => {
-    scoreModel.findOne(req.query.student_id)
+    const { student_id } = req.query;
+
+    scoreModel.findOne(student_id)
+        .then((result) => {
+            return res.json(result);
+        }).catch((err) => {
+            return res.status(500).json('Internal server error');
+        });
+}
+
+exports.add = (req, res, next) => {
+    const { student_id, subject_id } = req.body;
+
+    scoreModel.add(student_id, subject_id)
         .then((result) => {
             return res.json(result);
         }).catch((err) => {

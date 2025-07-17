@@ -9,6 +9,17 @@ exports.find = (req, res, next) => {
         });
 }
 
+exports.getSubjectForStudent = (req, res, next) => {
+    const { student_id } = req.query;
+
+    subjectModel.getSubjectForStudent(student_id)
+        .then((result) => {
+            return res.json(result);
+        }).catch((err) => {
+            return res.status(500).json('Internal server error');
+        });
+}
+
 exports.add = (req, res, next) => {
     const { subject_name } = req.body;
 

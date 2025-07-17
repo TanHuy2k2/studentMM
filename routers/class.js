@@ -1,7 +1,7 @@
 const express = require('express');
 const classRouter = express.Router();
 const classController = require('../controllers/class');
-const { validateClassName } = require('../middlewave/validate/class');
+const { validateClassName, validateDelete } = require('../middlewave/validate/class');
 
 // Route to get subjects assigned to a specific teacher (by teacher ID)
 classRouter.get('/get-subject-teacher', classController.getSubjectByTeacherId)
@@ -19,9 +19,9 @@ classRouter.post('/add', validateClassName, classController.add)
 classRouter.patch('/update', validateClassName, classController.update)
 
 // Route to perform soft delete on a class
-classRouter.patch('/soft-delete', classController.softDelete)
+classRouter.patch('/soft-delete', validateDelete, classController.softDelete)
 
 // Route to permanently delete a class from the database
-classRouter.delete('/delete', classController.delete)
+classRouter.delete('/delete', validateDelete, classController.delete)
 
 module.exports = classRouter;

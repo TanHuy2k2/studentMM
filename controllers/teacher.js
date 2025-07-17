@@ -11,6 +11,7 @@ exports.find = (req, res, next) => {
 
 exports.add = (req, res, next) => {
     const { account_id } = req.body;
+
     teacherModel.add(account_id)
         .then((result) => {
             return res.json(result)
@@ -21,6 +22,7 @@ exports.add = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
     const { account_id } = req.body;
+
     teacherModel.delete(account_id)
         .then((result) => {
             return res.json(result)

@@ -1,4 +1,5 @@
 const { body, validationResult } = require('express-validator');
+const { handleValidationErrors } = require('../validate/handleValidationErrors')
 
 const validateRegister = [
     body('name')
@@ -50,17 +51,7 @@ const validateLogin = [
         .bail()
         .isLength({ min: 3 }).withMessage('Password must be at least 3 characters'),
 
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                success: false,
-                error: errors.array()[0]
-            });
-        }
-
-        next();
-    }
+    handleValidationErrors
 ];
 
 
@@ -77,17 +68,16 @@ const validateUpdate = [
         .bail()
         .isEmail().withMessage('Invalid email format'),
 
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                success: false,
-                error: errors.array()[0]
-            });
-        }
-
-        next();
-    }
+    handleValidationErrors
 ];
 
-module.exports = { validateRegister, validateLogin, validateUpdate };
+const validateDelete = [
+    body('account_id')
+        .trim()
+        .notEmpty().withMessage('Cannot get account ID')
+        .isInt().withMessage('Account ID must be int'),
+
+    handleValidationErrors
+]
+
+module.exports = { validateRegister, validateLogin, validateUpdate, validateDelete };

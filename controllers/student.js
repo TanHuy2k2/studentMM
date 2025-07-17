@@ -1,12 +1,19 @@
 const studentModel = require('../models/student');
+const { PAGE_SIZE } = require('../contants/contant');
 
-exports.find = (req, res, next) => {
-    studentModel.find()
-        .then((result) => {
-            return res.json(result);
-        }).catch((err) => {
-            return res.status(500).json('Internal server error');
-        });
+exports.find = async (req, res, next) => {
+    const { page } = req.query;
+
+    try {
+        const totalStudents = await studentModel.totalStudents();
+        const listStudents = await studentModel.find(page, PAGE_SIZE);
+        return res.json({
+            total: totalStudents,
+            result: listStudents
+        })
+    } catch (error) {
+        return res.status(500).json('Internal server error');
+    }
 }
 
 exports.add = (req, res, next) => {
@@ -14,7 +21,7 @@ exports.add = (req, res, next) => {
 
     studentModel.add(account_id, class_id)
         .then((result) => {
-            return res.json({ success: true });
+            return res.json(result);
         }).catch((err) => {
             return res.status(500).json('Internal server error');
         });

@@ -1,4 +1,5 @@
 function showTeacher() {
+    hidePagging();
     document.getElementById('mainContent').innerHTML = `
     <button id="btn-check" style="float: right;" onclick="addteacher()">Thêm giáo viên</button>
     <table border="1">
@@ -104,7 +105,7 @@ async function saveTeacher() {
         alert('Thêm giáo viên thành công!');
         showTeacher();
     } catch (error) {
-        alert('Không thể thêm giáo viên. Vui lòng thử lại sau.');
+        alert(error['responseJSON']['error'].msg);
     }
 }
 
@@ -159,7 +160,7 @@ async function saveUpdateTeacher(acc_id) {
         alert('Cập nhật thông tin thành công!');
         showTeacher();
     } catch (error) {
-        alert('Không thể thêm giáo viên. Vui lòng thử lại sau.');
+        alert(error['responseJSON']['error'].msg);
     }
 }
 
@@ -190,6 +191,6 @@ async function deleteTeacher(account_id) {
         alert('Xoá giáo viên thành công!');
         showTeacher();
     } catch (error) {
-        alert('Không thể xoá giáo viên. Vui lòng thử lại sau.');
+        alert(error['responseJSON']['error'].msg);
     }
 }

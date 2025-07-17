@@ -1,4 +1,5 @@
 function showScore() {
+  hidePagging();
   document.getElementById('mainContent').innerHTML = `
     <h1>Kết quả học tập</h1>
     <table border="1">

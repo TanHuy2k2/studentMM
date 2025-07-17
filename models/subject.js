@@ -13,6 +13,24 @@ const Subject = {
         return query(sql);
     },
 
+    getSubjectForStudent: (student_id) => {
+        const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, 
+                    acc.name AS teacher_name
+                    FROM student.subject AS sj
+                    INNER JOIN student.teacher_subject AS ts 
+                    ON sj.id = ts.subject_id
+                    INNER JOIN student.teacher AS tc 
+                    ON ts.teacher_id = tc.id
+                    INNER JOIN student.accounts AS acc 
+                    ON tc.account_id = acc.id
+                    WHERE sj.id NOT IN (
+                        SELECT subject_id
+                        FROM student.score
+                        WHERE student_id = ?
+                    );`
+        return query(sql, [student_id]);
+    },
+
     add: (subject_name) => {
         const sql = `INSERT INTO student.subject(name)
                     VALUES (?)`;
