@@ -5,7 +5,11 @@ exports.find = (req, res, next) => {
         .then((result) => {
             return res.json(result)
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot find data teacher",
+                error: err.message
+            });
         })
 }
 
@@ -16,7 +20,11 @@ exports.add = (req, res, next) => {
         .then((result) => {
             return res.json(result)
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot add teacher",
+                error: err.message
+            });
         })
 }
 
@@ -27,6 +35,10 @@ exports.delete = (req, res, next) => {
         .then((result) => {
             return res.json(result)
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot delete teacher",
+                error: err.message
+            });
         })
 }

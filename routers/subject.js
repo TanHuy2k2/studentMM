@@ -7,6 +7,9 @@ const { validateAdd, validateAddTeacherSubject, validateUpdateTeacherSubject,
 // Route to get all data from table subject
 subjectRouter.get('/find', subjectController.find);
 
+// Route to get subjects assigned to a specific teacher (by teacher ID)
+subjectRouter.get('/get-subject-teacher', subjectController.getSubjectByTeacherId)
+
 // Route to get subject not yet studied for student
 subjectRouter.get('/get-subject-for-student', subjectController.getSubjectForStudent);
 

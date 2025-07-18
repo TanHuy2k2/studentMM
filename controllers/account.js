@@ -22,7 +22,11 @@ exports.register = async (req, res) => {
         const registerResult = await accountModel.register(name, email, hashedPassword, role, imagePath);
         return res.json(registerResult);
     } catch (err) {
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        return res.status(400).json({
+            success: false,
+            message: 'Cannot register account',
+            error: err.message
+        });
     }
 };
 
@@ -49,8 +53,9 @@ exports.login = async (req, res) => {
 
         return res.json({ 'success': true });
     } catch (err) {
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
+            message: "Cannot login account.",
             error: err.message
         });
     }
@@ -67,7 +72,11 @@ exports.update = async (req, res) => {
         const result = await accountModel.update(acc_id, name, email, image)
         return res.json(result);
     } catch (err) {
-        return res.status(500).json('Internal server error');
+        return res.status(400).json({
+            success: false,
+            message: "Cannot update account.",
+            error: err.message
+        });
     }
 }
 
@@ -76,12 +85,13 @@ exports.delete = async (req, res) => {
 
     try {
         const result = await accountModel.delete(account_id)
-        if (result.success)
-            return res.json(result);
-        else
-            return res.status(500).json('Can not delete data');
+        return res.json(result);
     } catch (err) {
-        return res.status(500).json('Internal server error');
+        return res.status(400).json({
+            success: false,
+            message: "Cannot delete account.",
+            error: err.message
+        });
     }
 }
 

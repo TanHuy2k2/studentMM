@@ -12,7 +12,11 @@ exports.find = async (req, res, next) => {
             result: listStudents
         })
     } catch (error) {
-        return res.status(500).json('Internal server error');
+        return res.status(400).json({
+            success: false,
+            message: "Cannot get data student.",
+            error: err.message
+        });
     }
 }
 
@@ -23,7 +27,11 @@ exports.add = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot add student.",
+                error: err.message
+            });
         });
 }
 
@@ -32,12 +40,13 @@ exports.update = (req, res, next) => {
 
     studentModel.update(student_id, class_id)
         .then((result) => {
-            if (result.success)
-                return res.json(result);
-            else
-                return res.status(500).json('Can not update data');
+            return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot update student.",
+                error: err.message
+            });
         });
 }
 
@@ -46,11 +55,12 @@ exports.delete = (req, res, next) => {
 
     studentModel.delete(account_id)
         .then((result) => {
-            if (result.success)
-                return res.json(result);
-            else
-                return res.status(500).json('Can not update data');
+            return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot delete student.",
+                error: err.message
+            });
         });
 }
