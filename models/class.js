@@ -1,16 +1,6 @@
 const query = require('./db');
 
 const Class = {
-    getSubjectByTeacherId: (teacher_id) => {
-        const sql = `
-            SELECT ts.teacher_id, ts.subject_id, sj.name
-            FROM student.teacher_subject ts
-            inner join student.subject sj
-            ON ts.subject_id = sj.id
-            WHERE ts.teacher_id = ?`;
-        return query(sql, [teacher_id]);
-    },
-
     find: () => {
         const sql = `SELECT * FROM student.class where isDelete = false`;
         return query(sql);

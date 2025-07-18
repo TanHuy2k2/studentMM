@@ -7,7 +7,11 @@ exports.findOne = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot find one score.",
+                error: err.message
+            });
         });
 }
 
@@ -18,7 +22,11 @@ exports.add = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot add score.",
+                error: err.message
+            });
         });
 }
 
@@ -27,7 +35,11 @@ exports.getStudentScore = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot get score of student.",
+                error: err.message
+            });
         });
 }
 
@@ -38,6 +50,10 @@ exports.update = (req, res, next) => {
         .then(() => {
             return res.json('Update score successfully');
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot update score.",
+                error: err.message
+            });
         });
 }

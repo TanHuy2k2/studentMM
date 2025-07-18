@@ -13,6 +13,16 @@ const Subject = {
         return query(sql);
     },
 
+    getSubjectByTeacherId: (teacher_id) => {
+        const sql = `
+            SELECT ts.teacher_id, ts.subject_id, sj.name
+            FROM student.teacher_subject ts
+            inner join student.subject sj
+            ON ts.subject_id = sj.id
+            WHERE ts.teacher_id = ?`;
+        return query(sql, [teacher_id]);
+    },
+
     getSubjectForStudent: (student_id) => {
         const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, 
                     acc.name AS teacher_name

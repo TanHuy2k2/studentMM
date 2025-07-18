@@ -15,7 +15,7 @@ function showSubjectTeacher() {
     </table>`;
 
   $.ajax({
-    url: '/class/get-subject-teacher',
+    url: '/subject/get-subject-teacher',
     type: 'GET',
     data: {
       teacher_id: $('#ID').val(),

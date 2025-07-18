@@ -3,9 +3,6 @@ const classRouter = express.Router();
 const classController = require('../controllers/class');
 const { validateClassName, validateDelete } = require('../middlewave/validate/class');
 
-// Route to get subjects assigned to a specific teacher (by teacher ID)
-classRouter.get('/get-subject-teacher', classController.getSubjectByTeacherId)
-
 // Route to get all class data
 classRouter.get('/find', classController.find)
 

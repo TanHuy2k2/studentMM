@@ -1,22 +1,15 @@
 const classModel = require('../models/class');
 
-exports.getSubjectByTeacherId = (req, res, next) => {
-    const { teacher_id } = req.query;
-
-    classModel.getSubjectByTeacherId(teacher_id)
-        .then((result) => {
-            return res.json(result);
-        }).catch((err) => {
-            return res.status(500).json('Internal server error');
-        });
-}
-
 exports.find = (req, res, next) => {
     classModel.find()
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot get data class.",
+                error: err.message
+            });
         });
 }
 
@@ -25,7 +18,11 @@ exports.getClassForRegister = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot get class for register",
+                error: err.message
+            });
         });
 }
 
@@ -41,7 +38,11 @@ exports.add = async (req, res, next) => {
         const result = await classModel.add(class_name);
         return res.json(result);
     } catch (err) {
-        return res.status(500).json('Internal server error');
+        return res.status(400).json({
+            success: false,
+            message: "Cannot insert class",
+            error: err.message
+        });
     }
 }
 
@@ -51,13 +52,17 @@ exports.update = async (req, res, next) => {
     try {
         const checkResult = await classModel.checkClass(class_name);
         if (checkResult.exists) {
-            return res.json({ success: false });
+            return res.json({ success: false, message: "Class already exists." });
         }
 
         const result = await classModel.update(class_id, class_name)
         return res.json(result);
     } catch (err) {
-        return res.status(500).json('Internal server error');
+        return res.status(400).json({
+            success: false,
+            message: "Cannot update class.",
+            error: err.message
+        });
     }
 }
 
@@ -69,7 +74,11 @@ exports.softDelete = (req, res, next) => {
             return res.json(result);
         })
         .catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot soft delete class.",
+                error: err.message
+            });
         });
 }
 
@@ -81,6 +90,10 @@ exports.delete = (req, res, next) => {
             return res.json(result);
         })
         .catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot delete class.",
+                error: err.message
+            });
         });
 }

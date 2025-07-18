@@ -5,7 +5,26 @@ exports.find = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot find subject.",
+                error: err.message
+            });
+        });
+}
+
+exports.getSubjectByTeacherId = (req, res, next) => {
+    const { teacher_id } = req.query;
+
+    subjectModel.getSubjectByTeacherId(teacher_id)
+        .then((result) => {
+            return res.json(result);
+        }).catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Cannot get subject by teacher ID.",
+                error: err.message
+            });
         });
 }
 
@@ -16,7 +35,11 @@ exports.getSubjectForStudent = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot get subject for student.",
+                error: err.message
+            });
         });
 }
 
@@ -27,7 +50,11 @@ exports.add = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot add subject",
+                error: err.message
+            });
         });
 }
 
@@ -38,7 +65,11 @@ exports.addTeacherSubject = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot add to table TeacherSubject",
+                error: err.message
+            });
         })
 }
 
@@ -49,7 +80,11 @@ exports.update = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot update subject",
+                error: err.message
+            });
         })
 }
 
@@ -60,7 +95,11 @@ exports.updateTeacherSubject = (req, res, next) => {
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
-            return res.status(500).json('Internal server error');
+            return res.status(400).json({
+                success: false,
+                message: "Cannot update data table TeacherSubject",
+                error: err.message
+            });
         })
 }
 
@@ -74,6 +113,10 @@ exports.delete = async (req, res, next) => {
             return res.json(deleteSubject);
         }
     } catch (error) {
-        return res.status(500).json('Internal server error');
+        return res.status(400).json({
+            success: false,
+            message: "Cannot delete subject.",
+            error: err.message
+        });
     }
 }

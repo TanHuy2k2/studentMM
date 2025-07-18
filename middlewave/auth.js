@@ -24,7 +24,7 @@ const checkLogin = async (req, res, next) => {
                 if (studentInfo.length > 0) {
                     req.data = first(studentInfo);
                 } else {
-                    return res.status(400).json({ success: false, errors: "Cannot get student" });
+                    return res.status(400).json({ success: false, errors: "Cannot get student auth." });
                 }
                 break;
 
@@ -33,7 +33,7 @@ const checkLogin = async (req, res, next) => {
                 if (teacherInfo.length > 0) {
                     req.data = first(teacherInfo);
                 } else {
-                    return res.status(400).json({ success: false, errors: "Cannot get student" });
+                    return res.status(400).json({ success: false, errors: "Cannot get teacher auth." });
                 }
                 break;
 
