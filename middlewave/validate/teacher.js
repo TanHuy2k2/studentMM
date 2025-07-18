@@ -2,7 +2,7 @@ const { body } = require('express-validator');
 const { handleValidationErrors } = require('../validate/handleValidationErrors')
 
 const validateAdd = [
-    body('account_id')
+    body('accountId')
         .trim()
         .notEmpty().withMessage('Cannot get account ID')
         .isInt().withMessage('Account ID must be int'),

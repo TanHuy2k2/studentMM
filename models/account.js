@@ -12,38 +12,38 @@ const Account = {
             .then((result) => ({ success: true, id: result.insertId }));
     },
 
-    findOne: (id) => {
+    findOne: (accId) => {
         const sql = 'SELECT * FROM accounts WHERE id = ? LIMIT 1';
-        return query(sql, [id]);
+        return query(sql, [accId]);
     },
 
-    getStudentByAccount: (acc_id) => {
+    getStudentByAccount: (accId) => {
         const sql = `SELECT ac.role, ac.name, st.id, st.class_id 
                     FROM student.accounts ac
                     INNER JOIN student.students st
                     ON ac.id = st.account_id
                     WHERE ac.id = ? LIMIT 1`;
-        return query(sql, [acc_id]);
+        return query(sql, [accId]);
     },
 
-    getTeacherByAccount: (acc_id) => {
+    getTeacherByAccount: (accId) => {
         const sql = `SELECT ac.role, ac.name, tc.id
                     FROM student.accounts ac
                     INNER JOIN student.teacher tc
                     ON ac.id = tc.account_id
                     WHERE ac.id = ? LIMIT 1`;
-        return query(sql, [acc_id]);
+        return query(sql, [accId]);
     },
 
-    update: (acc_id, name, email, image) => {
+    update: (accId, name, email, image) => {
         const sql = `UPDATE student.accounts
                     SET name=?, email=?, image=? where id=?`;
-        return query(sql, [name, email, image, acc_id]).then(() => ({ success: true }));
+        return query(sql, [name, email, image, accId]).then(() => ({ success: true }));
     },
 
-    delete: (acc_id) => {
+    delete: (accId) => {
         const sql = `DELETE FROM student.accounts where id=?`;
-        return query(sql, [acc_id]).then(() => ({ success: true }));
+        return query(sql, [accId]).then(() => ({ success: true }));
     }
 };
 

@@ -62,14 +62,14 @@ exports.login = async (req, res) => {
 }
 
 exports.update = async (req, res) => {
-    let { acc_id, name, email, image } = req.body;
+    let { accId, name, email, image } = req.body;
 
     if (req.file) {
         image = `/images/${req.file.filename}`;
     }
 
     try {
-        const result = await accountModel.update(acc_id, name, email, image)
+        const result = await accountModel.update(accId, name, email, image)
         return res.json(result);
     } catch (err) {
         return res.status(400).json({
@@ -81,10 +81,10 @@ exports.update = async (req, res) => {
 }
 
 exports.delete = async (req, res) => {
-    const { account_id } = req.body;
+    const { accountId } = req.body;
 
     try {
-        const result = await accountModel.delete(account_id)
+        const result = await accountModel.delete(accountId)
         return res.json(result);
     } catch (err) {
         return res.status(400).json({

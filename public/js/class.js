@@ -61,7 +61,7 @@ function saveClass() {
         url: '/class/add',
         type: 'POST',
         data: {
-            class_name: className,
+            className: className,
         }
     }).then(response => {
         if (response.success) {
@@ -100,8 +100,8 @@ function saveClassEdit(button, class_id) {
         url: '/class/update',
         type: 'PATCH',
         data: {
-            class_id: class_id,
-            class_name: newValue,
+            classId: class_id,
+            className: newValue,
         }
     }).then(response => {
         if (response.success) {
@@ -125,7 +125,7 @@ function deleteSoftClass(class_id) {
         url: '/class/soft-delete',
         type: 'PATCH',
         data: {
-            class_id: class_id,
+            classId: class_id,
         }
     }).then(response => {
         if (response.success) {
@@ -148,7 +148,7 @@ function deleteHardClass(class_id) {
         url: '/class/delete',
         type: 'DELETE',
         data: {
-            class_id: class_id,
+            classId: class_id,
         }
     }).then(response => {
         if (response.success) {

@@ -18,7 +18,7 @@ function showSubjectTeacher() {
     url: '/subject/get-subject-teacher',
     type: 'GET',
     data: {
-      teacher_id: $('#ID').val(),
+      teacherId: $('#ID').val(),
     }
   })
     .then(response => {
@@ -129,7 +129,7 @@ async function saveSubject() {
     const response_add_subject = await $.ajax({
       url: '/subject/add',
       type: 'POST',
-      data: { subject_name: subjectName },
+      data: { subjectName: subjectName },
     });
     if (!response_add_subject.success) {
       return alert("Không thành công")
@@ -138,7 +138,7 @@ async function saveSubject() {
     const response_add_subject_teacher = await $.ajax({
       url: '/subject/add-teacher-subject',
       type: 'POST',
-      data: { subject_id: response_add_subject.subject_id, teacher_id: parseInt(teacherId) }
+      data: { subjectId: response_add_subject.subject_id, teacherId: parseInt(teacherId) }
     });
     if (!response_add_subject_teacher.success) {
       return alert("Không thành công");
@@ -199,7 +199,7 @@ async function saveUpdate(subject_id, teacher_id) {
     const response_update_subject = await $.ajax({
       url: '/subject/update',
       type: 'PATCH',
-      data: { subject_id: subject_id, subject_name: subjectName },
+      data: { subjectId: subject_id, subjectName: subjectName },
     });
     if (!response_update_subject.success) {
       return alert("Không thành công")
@@ -209,7 +209,7 @@ async function saveUpdate(subject_id, teacher_id) {
       const response_update_subject_teacher = await $.ajax({
         url: '/subject/update-teacher-subject',
         type: 'PATCH',
-        data: { subject_id: subject_id, teacher_id: teacherId }
+        data: { subjectId: subject_id, teacherId: teacherId }
       });
       if (!response_update_subject_teacher.success) {
         return alert("Không thành công");
@@ -232,7 +232,7 @@ async function deleteSubject(subject_id) {
     const response_delete = await $.ajax({
       url: '/subject/delete',
       type: 'DELETE',
-      data: { subject_id: subject_id },
+      data: { subjectId: subject_id },
     });
     if (!response_delete.success) {
       return alert("Không thành công")
@@ -266,7 +266,7 @@ function showSubjectForRegister() {
     url: '/subject/get-subject-for-student',
     type: 'GET',
     data: {
-      student_id: student_id,
+      studentId: student_id,
     }
   })
     .then(response => {
@@ -297,7 +297,7 @@ async function registerSubject(student_id, subject_id) {
     const response = await $.ajax({
       url: '/score/add',
       type: 'POST',
-      data: { student_id: student_id, subject_id: subject_id },
+      data: { studentId: student_id, subjectId: subject_id },
     });
     if (!response.success) {
       return alert("Không thành công")

@@ -11,19 +11,19 @@ const Class = {
         return query(sql);
     },
 
-    add: (class_name) => {
+    add: (className) => {
         const sql = `INSERT INTO student.class (name, isDelete) VALUES (?, false)`;
-        return query(sql, [class_name]).then(() => ({ success: true }));
+        return query(sql, [className]).then(() => ({ success: true }));
     },
 
-    update: (class_id, class_name) => {
+    update: (classId, className) => {
         const sql = `UPDATE student.class SET name = ? WHERE id = ?`;
-        return query(sql, [class_name, class_id]).then(() => ({ success: true }));
+        return query(sql, [className, classId]).then(() => ({ success: true }));
     },
 
-    checkClass: (class_name) => {
+    checkClass: (className) => {
         const sql = `SELECT * FROM student.class WHERE name = ? LIMIT 1`;
-        return query(sql, [class_name]).then(rows => {
+        return query(sql, [className]).then(rows => {
             if (rows.length > 0) {
                 return { exists: true };
             } else {
@@ -32,14 +32,14 @@ const Class = {
         });
     },
 
-    softDelete: (class_id) => {
+    softDelete: (classId) => {
         const sql = `UPDATE student.class SET isDelete = true WHERE id = ?`;
-        return query(sql, [class_id]).then(() => ({ success: true }));
+        return query(sql, [classId]).then(() => ({ success: true }));
     },
 
-    delete: (class_id) => {
+    delete: (classId) => {
         const sql = `DELETE FROM student.class WHERE id = ?`;
-        return query(sql, [class_id]).then(() => ({ success: true }));
+        return query(sql, [classId]).then(() => ({ success: true }));
     }
 }
 

@@ -2,7 +2,7 @@ const { body } = require('express-validator');
 const { handleValidationErrors } = require('../validate/handleValidationErrors')
 
 const validateAdd = [
-    body('subject_name')
+    body('subjectName')
         .trim()
         .notEmpty().withMessage('Subject name is required'),
 
@@ -10,11 +10,11 @@ const validateAdd = [
 ];
 
 const validateAddTeacherSubject = [
-    body('subject_id')
+    body('subjectId')
         .trim()
         .notEmpty().withMessage('Cannot get subject ID')
         .isInt().withMessage('Subject ID must be int'),
-    body('teacher_id')
+    body('teacherId')
         .trim()
         .notEmpty().withMessage('Cannot get teacher ID')
         .isInt().withMessage('Teacher ID must be int'),
@@ -23,11 +23,11 @@ const validateAddTeacherSubject = [
 ];
 
 const validateUpdate = [
-    body('subject_id')
+    body('subjectId')
         .trim()
         .notEmpty().withMessage('Cannot get subject ID')
         .isInt().withMessage('Subject ID must be int'),
-    body('subject_name')
+    body('subjectName')
         .trim()
         .notEmpty().withMessage('Subject name is required'),
 
@@ -37,7 +37,7 @@ const validateUpdate = [
 const validateUpdateTeacherSubject = validateAddTeacherSubject;
 
 const validateDelete = [
-    body('subject_id')
+    body('subjectId')
         .trim()
         .notEmpty().withMessage('Cannot get subject ID')
         .isInt().withMessage('Subject ID must be int'),

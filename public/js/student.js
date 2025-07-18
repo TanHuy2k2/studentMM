@@ -1,4 +1,46 @@
-function showStudent(page = 1) {
+const getClassFilter = () => {
+  $.ajax({
+    url: '/class/get-class-for-register',
+    type: 'GET',
+  }).then(response => {
+    const classSelect = document.getElementById('classFilter');
+    response.forEach(response => {
+      const option = document.createElement('option');
+      option.value = response.id;
+      option.textContent = response.name;
+
+      classSelect.appendChild(option);
+    });
+  }).catch(error => {
+    alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
+  });
+}
+
+getClassFilter();
+
+const filterChange = (check) => {
+  showStudent(1, check);
+  updatePagination(check);
+}
+
+const restoreFilter = () => {
+  document.getElementById('classFilter').value = '';
+  document.getElementById('min_gpa').value = '';
+  document.getElementById('max_gpa').value = '';
+  filterChange(0);
+}
+
+function hidePagging() {
+  document.getElementById('pagging').style.display = 'none';
+  document.getElementById('search').style.display = 'none';
+}
+
+function showStudent(page = 1, filter = 0) {
+  document.getElementById('search').style.display = 'flex';
+  const classID = document.getElementById('classFilter').value;
+  const minGpa = document.getElementById('min_gpa').value;
+  const maxGpa = document.getElementById('max_gpa').value;
+
   document.getElementById('mainContent').innerHTML = `
     <button id="btn-check" style="float: right;" onclick="addStudent()">Thêm học sinh</button>
     <table border="1">
@@ -18,39 +60,45 @@ function showStudent(page = 1) {
     </table>`;
 
   $.ajax({
-    url: `/student/find?page=${page}`,
+    url: `/student/find`,
     type: 'GET',
+    data: {
+      page: page,
+      classId: classID,
+      minGpa: minGpa,
+      maxGpa: maxGpa,
+      filter: filter
+    }
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
+    tbody.innerHTML = ''; // Clear previous data
     let i = 1;
     response['result'].forEach(res => {
       const row = `
-          <tr>
-            <td id="col">${i}</td>
-            <td id="col"><img src="${res.image ? res.image : ''}" style="width: 50px; height: 50px;"></td>
-            <td>${res.name}</td>
-            <td>${res.email}</td>
-            <td>${res.class_name}</td>
-            <td id="col">${res.gpa}</td>
-            <td id="col">
-              <button id="btn-check" onclick='updateStudent(${JSON.stringify(res)})'>Cập nhật</button>
-              <button id="btn-check" onclick="deleteStudent(${res.acc_id})">Xoá</button>
-            </td>
-          </tr>`;
+        <tr>
+          <td id="col">${i}</td>
+          <td id="col"><img src="${res.image ? res.image : ''}" style="width: 50px; height: 50px;"></td>
+          <td>${res.name}</td>
+          <td>${res.email}</td>
+          <td>${res.class_name}</td>
+          <td id="col">${res.gpa}</td>
+          <td id="col">
+            <button id="btn-check" onclick='updateStudent(${JSON.stringify(res)})'>Cập nhật</button>
+            <button id="btn-check" onclick="deleteStudent(${res.acc_id})">Xoá</button>
+          </td>
+        </tr>`;
       i++;
       tbody.innerHTML += row;
     });
+
     document.getElementById('pagging').style.display = 'block';
   }).catch(error => {
     document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách học sinh. Vui lòng thử lại sau.</p>`;
   });
 }
 
-function hidePagging() {
-  document.getElementById('pagging').style.display = 'none';
-}
-
 function addStudent() {
+  hidePagging();
   document.getElementById('mainContent').innerHTML = `
     <h1>Thêm học sinh</h1>
     <div class="form-group">
@@ -125,7 +173,7 @@ async function saveStudent() {
     const response_add = await $.ajax({
       url: '/student/add',
       type: 'POST',
-      data: { account_id: response_register.id, class_id: classId },
+      data: { accountId: response_register.id, classId: classId },
     });
     if (!response_add.success) {
       throw new Error('Failed to add student');
@@ -190,7 +238,7 @@ async function saveUpdateStudent(acc_id, student_id) {
   const classId = document.getElementById('classSelect').value;
   const imageFile = document.getElementById('studentImage').files[0] || document.getElementById('oldImage').value;
   const formData = new FormData();
-  formData.append('acc_id', acc_id);
+  formData.append('accId', acc_id);
   formData.append('name', name);
   formData.append('email', email);
   formData.append('image', imageFile);
@@ -215,7 +263,7 @@ async function saveUpdateStudent(acc_id, student_id) {
     const response_update_student = await $.ajax({
       url: '/student/update',
       type: 'PATCH',
-      data: { student_id: student_id, class_id: classId },
+      data: { studentId: student_id, classId: classId },
     });
     if (!response_update_student.success) {
       throw new Error('Không thể sửa dữ liệu');
@@ -237,7 +285,7 @@ async function deleteStudent(account_id) {
     const response_delete_stu = await $.ajax({
       url: '/student/delete',
       type: 'DELETE',
-      data: { account_id: account_id },
+      data: { accountId: account_id },
     });
     if (!response_delete_stu.success) {
       return alert("Không thành công")
@@ -246,7 +294,7 @@ async function deleteStudent(account_id) {
     const response_delete_acc = await $.ajax({
       url: '/account/delete',
       type: 'DELETE',
-      data: { account_id: account_id }
+      data: { accountId: account_id }
     });
     if (!response_delete_acc.success) {
       return alert("Không thành công");
@@ -259,23 +307,26 @@ async function deleteStudent(account_id) {
   }
 }
 
-$(document).ready(function () {
+function updatePagination(filter = 0) {
+  const classID = document.getElementById('classFilter').value;
+  const minGpa = document.getElementById('min_gpa').value;
+  const maxGpa = document.getElementById('max_gpa').value;
+
   $('#pagging').pagination({
-    dataSource: '/student/find?page=1',
+    dataSource: `/student/find?page=1&classId=${classID}&minGpa=${minGpa}&maxGpa=${maxGpa}&filter=${filter}`,
     locator: 'result',
     totalNumberLocator: function (response) {
       return response.total;
     },
-    pageSize: 5,
-
+    pageSize: 4,
     afterPageOnClick: function (event, pageNumber) {
-      showStudent(pageNumber);
+      showStudent(pageNumber, filter);
     },
     afterPreviousOnClick: function (event, pageNumber) {
-      showStudent(pageNumber);
+      showStudent(pageNumber, filter);
     },
     afterNextOnClick: function (event, pageNumber) {
-      showStudent(pageNumber);
+      showStudent(pageNumber, filter);
     },
-  })
-});
+  });
+}

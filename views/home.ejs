@@ -22,7 +22,7 @@
         <input type="hidden" id="ID" value="<%= data.id %>">
         <% switch (data.role) { case 'admin' : %>
             <button onclick="showClass()">Lớp học</button>
-            <button onclick="showStudent()">Học sinh</button>
+            <button onclick="filterChange(0)">Học sinh</button>
             <button onclick="showTeacher()">Giáo viên</button>
             <button onclick="showSubject()">Môn học</button>
             <% break; case 'teacher' : %>
@@ -34,6 +34,34 @@
     </div>
 
     <div style="display: block; width: 90%;">
+        <div id="search" style="margin-top: 3px; display: none; justify-content: center; 
+            align-items: center; flex-wrap: wrap;">
+
+            <div class="form-group" style="display: flex; flex-direction: column;">
+                <label for="classFilter" style="margin-bottom: 5px; font-weight: bold;">Lớp học:</label>
+                <select id="classFilter"
+                    style="padding: 5px; width: 200px; border: 1px solid #ccc; border-radius: 5px;">
+                    <option value="">None</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="display: flex; flex-direction: column; margin-left: 10px;">
+                <label for="GPAFilter" style="margin-bottom: 5px; font-weight: bold;">GPA:</label>
+                <input type="number" step="0.5" id="min_gpa" placeholder="min gpa" value="">
+                <input type="number" step="0.5" id="max_gpa" placeholder="max gpa" value="">
+            </div>
+
+            <button onclick="filterChange(1)"
+                style="padding: 10px 20px; margin-top: 5px; background-color: #1f2a40; color: white; margin-left: 10px;">
+                Lọc
+            </button>
+
+            <button onclick="restoreFilter()"
+                style="padding: 10px 20px; margin-top: 5px; background-color: #1f2a40; color: white; margin-left: 10px;">
+                Khôi phục
+            </button>
+        </div>
+
         <div class="main" id="mainContent">
             <h3>Chào mừng đến quản lý học sinh</h3>
             <div style="display: flex; gap: 20px; margin-top: 20px;">
@@ -62,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <div id="pagging" style="display: none; margin-top: 20px; align-items: center; justify-items: center;"></div>
+        <div id="pagging" style="display: none; margin-top: 5px; align-items: center; justify-items: center;"></div>
     </div>
 
 </body>

@@ -14,9 +14,9 @@ exports.find = (req, res, next) => {
 }
 
 exports.add = (req, res, next) => {
-    const { account_id } = req.body;
+    const { accountId } = req.body;
 
-    teacherModel.add(account_id)
+    teacherModel.add(accountId)
         .then((result) => {
             return res.json(result)
         }).catch((err) => {
@@ -29,9 +29,9 @@ exports.add = (req, res, next) => {
 }
 
 exports.delete = (req, res, next) => {
-    const { account_id } = req.body;
+    const { accountId } = req.body;
 
-    teacherModel.delete(account_id)
+    teacherModel.delete(accountId)
         .then((result) => {
             return res.json(result)
         }).catch((err) => {
