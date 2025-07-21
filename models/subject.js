@@ -13,17 +13,17 @@ const Subject = {
         return query(sql);
     },
 
-    getSubjectByTeacherId: (teacher_id) => {
+    getSubjectByTeacherId: (teacherId) => {
         const sql = `
             SELECT ts.teacher_id, ts.subject_id, sj.name
             FROM student.teacher_subject ts
             inner join student.subject sj
             ON ts.subject_id = sj.id
             WHERE ts.teacher_id = ?`;
-        return query(sql, [teacher_id]);
+        return query(sql, [teacherId]);
     },
 
-    getSubjectForStudent: (student_id) => {
+    getSubjectForStudent: (studentId) => {
         const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, 
                     acc.name AS teacher_name
                     FROM student.subject AS sj
@@ -38,43 +38,43 @@ const Subject = {
                         FROM student.score
                         WHERE student_id = ?
                     );`
-        return query(sql, [student_id]);
+        return query(sql, [studentId]);
     },
 
-    add: (subject_name) => {
+    add: (subjectName) => {
         const sql = `INSERT INTO student.subject(name)
                     VALUES (?)`;
-        return query(sql, [subject_name]).then((result) => ({ success: true, subject_id: result.insertId }));
+        return query(sql, [subjectName]).then((result) => ({ success: true, subject_id: result.insertId }));
     },
 
-    addTeacherSubject: (subject_id, teacher_id) => {
+    addTeacherSubject: (subjectId, teacherId) => {
         const sql = `INSERT INTO student.teacher_subject(teacher_id, subject_id)
                     VALUES (?,?)`;
-        return query(sql, [teacher_id, subject_id]).then(() => ({ success: true }));
+        return query(sql, [teacherId, subjectId]).then(() => ({ success: true }));
     },
 
-    update: (subject_id, subject_name) => {
+    update: (subjectId, subjectName) => {
         const sql = `UPDATE student.subject SET name = ? 
                     WHERE id = ?`;
-        return query(sql, [subject_name, subject_id]).then(() => ({ success: true }));
+        return query(sql, [subjectName, subjectId]).then(() => ({ success: true }));
     },
 
-    updateTeacherSubject: (subject_id, teacher_id) => {
+    updateTeacherSubject: (subjectId, teacherId) => {
         const sql = `UPDATE student.teacher_subject SET teacher_id = ? 
                     WHERE subject_id = ?`;
-        return query(sql, [teacher_id, subject_id]).then(() => ({ success: true }));
+        return query(sql, [teacherId, subjectId]).then(() => ({ success: true }));
     },
 
-    delete: (subject_id) => {
+    delete: (subjectId) => {
         const sql = `DELETE FROM student.subject
                     WHERE id = ?`;
-        return query(sql, [subject_id]).then(() => ({ success: true }));
+        return query(sql, [subjectId]).then(() => ({ success: true }));
     },
 
-    deleteTeacherSubject: (subject_id) => {
+    deleteTeacherSubject: (subjectId) => {
         const sql = `DELETE FROM student.teacher_subject
                     WHERE subject_id = ?`;
-        return query(sql, [subject_id]).then(() => ({ success: true }));
+        return query(sql, [subjectId]).then(() => ({ success: true }));
     }
 }
 

@@ -96,7 +96,7 @@ async function saveTeacher() {
         const response_add = await $.ajax({
             url: '/teacher/add',
             type: 'POST',
-            data: { account_id: response_register.id },
+            data: { accountId: response_register.id },
         });
         if (!response_add.success) {
             throw new Error('Failed to add teacher');
@@ -135,7 +135,7 @@ async function saveUpdateTeacher(acc_id) {
     const email = document.getElementById('teacherEmail').value;
     const imageFile = document.getElementById('teacherImage').files[0] || document.getElementById('oldImage').value;
     const formData = new FormData();
-    formData.append('acc_id', acc_id);
+    formData.append('accId', acc_id);
     formData.append('name', name);
     formData.append('email', email);
     formData.append('image', imageFile);
@@ -173,7 +173,7 @@ async function deleteTeacher(account_id) {
         const response_delete_teacher = await $.ajax({
             url: '/teacher/delete',
             type: 'DELETE',
-            data: { account_id: account_id },
+            data: { accountId: account_id },
         });
         if (!response_delete_teacher.success) {
             return alert("Không thành công")
@@ -182,7 +182,7 @@ async function deleteTeacher(account_id) {
         const response_delete_acc = await $.ajax({
             url: '/account/delete',
             type: 'DELETE',
-            data: { account_id: account_id }
+            data: { accountId: account_id }
         });
         if (!response_delete_acc.success) {
             return alert("Không thành công");

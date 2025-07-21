@@ -59,7 +59,7 @@ const validateUpdate = [
     body('name')
         .trim()
         .notEmpty().withMessage('Name is required')
-        .bail() // dừng nếu lỗi
+        .bail()
         .isString().withMessage('Name must be a string'),
 
     body('email')

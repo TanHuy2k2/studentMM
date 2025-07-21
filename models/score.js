@@ -1,7 +1,7 @@
 const query = require('./db');
 
 const Score = {
-    findOne: (student_id) => {
+    findOne: (studentId) => {
         const sql = `
             SELECT subject.name AS subject_name, 
                    score.attendance, 
@@ -13,16 +13,16 @@ const Score = {
             ON subject.id = score.subject_id
             WHERE score.student_id = ?
             GROUP BY subject_name, score.attendance, score.midterm, score.final;`;
-        return query(sql, [student_id]);
+        return query(sql, [studentId]);
     },
 
-    add: (student_id, subject_id) => {
+    add: (studentId, subjectId) => {
         const sql = `INSERT INTO student.score(student_id, subject_id, attendance, midterm, final)
                     VALUES (?,?,0,0,0)`;
-        return query(sql, [student_id, subject_id]).then(() => ({ success: true }));
+        return query(sql, [studentId, subjectId]).then(() => ({ success: true }));
     },
 
-    getStudentScore: (student_id) => {
+    getStudentScore: (studentId) => {
         const sql = `
             SELECT st.id AS student_id, acc.name, sc.attendance, sc.midterm, sc.final,
             ROUND(AVG((sc.attendance + sc.midterm + sc.final) / 3), 2) AS avg_socre
@@ -33,15 +33,15 @@ const Score = {
             ON st.account_id = acc.id
             WHERE sc.subject_id = ?
             GROUP BY st.id, acc.name, sc.attendance, sc.midterm, sc.final;`;
-        return query(sql, [student_id]);
+        return query(sql, [studentId]);
     },
 
-    update: (subject_id, student_id, attendance, midterm, final) => {
+    update: (subjectId, studentId, attendance, midterm, final) => {
         const sql = `
             UPDATE student.score
             SET attendance = ?, midterm = ?, final = ?
             WHERE subject_id = ? AND student_id = ?`;
-        return query(sql, [attendance, midterm, final, subject_id, student_id]);
+        return query(sql, [attendance, midterm, final, subjectId, studentId]);
     }
 }
 

@@ -20,7 +20,7 @@ function showScore() {
     url: '/score/find-one',
     type: 'GET',
     data: {
-      student_id: $('#ID').val(),
+      studentId: $('#ID').val(),
     }
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
@@ -64,7 +64,7 @@ function showStudentScore(subject_id) {
     url: '/score/get-student-score',
     type: 'GET',
     data: {
-      subject_id: subject_id,
+      subjectId: subject_id,
     }
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
@@ -114,8 +114,8 @@ function saveScore(button, subject_id, student_id) {
     url: '/score/update',
     type: 'PATCH',
     data: {
-      subject_id: subject_id,
-      student_id: student_id,
+      subjectId: subject_id,
+      studentId: student_id,
       attendance: attendance,
       midterm: midterm,
       final: final
@@ -123,12 +123,12 @@ function saveScore(button, subject_id, student_id) {
   }).then(data => {
     alert("Cập nhật thành công!");
 
-    row.cells[2].textContent = attendance;
-    row.cells[3].textContent = midterm;
-    row.cells[4].textContent = final;
-    row.cells[5].textContent = total;
+    row.cells[2].textContent = parseFloat(attendance);
+    row.cells[3].textContent = parseFloat(midterm);
+    row.cells[4].textContent = parseFloat(final);
+    row.cells[5].textContent = parseFloat(total);
 
-    button.textContent = "Edit";
+    button.textContent = "Cập nhật";
     button.onclick = function () {
       editScore(this, subject_id, student_id);
     };

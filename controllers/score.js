@@ -1,9 +1,9 @@
 const scoreModel = require('../models/score');
 
 exports.findOne = (req, res, next) => {
-    const { student_id } = req.query;
+    const { studentId } = req.query;
 
-    scoreModel.findOne(student_id)
+    scoreModel.findOne(studentId)
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -16,9 +16,9 @@ exports.findOne = (req, res, next) => {
 }
 
 exports.add = (req, res, next) => {
-    const { student_id, subject_id } = req.body;
+    const { studentId, subjectId } = req.body;
 
-    scoreModel.add(student_id, subject_id)
+    scoreModel.add(studentId, subjectId)
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -31,7 +31,9 @@ exports.add = (req, res, next) => {
 }
 
 exports.getStudentScore = (req, res, next) => {
-    scoreModel.getStudentScore(req.query.subject_id)
+    const { subjectId } = req.query;
+
+    scoreModel.getStudentScore(subjectId)
         .then((result) => {
             return res.json(result);
         }).catch((err) => {
@@ -44,9 +46,9 @@ exports.getStudentScore = (req, res, next) => {
 }
 
 exports.update = (req, res, next) => {
-    const { subject_id, student_id, attendance, midterm, final } = req.body;
+    const { subjectId, studentId, attendance, midterm, final } = req.body;
 
-    scoreModel.update(subject_id, student_id, attendance, midterm, final)
+    scoreModel.update(subjectId, studentId, attendance, midterm, final)
         .then(() => {
             return res.json('Update score successfully');
         }).catch((err) => {

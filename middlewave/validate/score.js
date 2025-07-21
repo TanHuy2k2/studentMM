@@ -2,11 +2,11 @@ const { body } = require('express-validator');
 const { handleValidationErrors } = require('../validate/handleValidationErrors')
 
 const validateAdd = [
-    body('subject_id')
+    body('subjectId')
         .trim()
         .notEmpty().withMessage('Cannot get subject ID')
         .isInt().withMessage('Subject ID must be int'),
-    body('student_id')
+    body('studentId')
         .trim()
         .notEmpty().withMessage('Cannot get student ID')
         .isInt().withMessage('Student ID must be int'),

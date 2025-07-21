@@ -6,10 +6,11 @@ const Student = {
         return query(sql).then((result) => result.length);
     },
 
-    find: (page, pageSize) => {
+    find: (page, pageSize, minGpa, maxGpa, classId) => {
         const skipNumber = (parseInt(page) - 1) * pageSize;
         const sql = `
             SELECT a.id AS acc_id, st.id AS student_id, a.name, a.image, a.email, c.name AS class_name,
+            c.id AS class_id,
             COALESCE(ROUND(AVG((s.attendance + s.midterm + s.final) / 3), 2), 0) AS gpa
             FROM student.accounts a
             INNER JOIN student.students st 
@@ -19,28 +20,31 @@ const Student = {
             LEFT JOIN student.score s 
             ON st.id = s.student_id
             GROUP BY a.id, st.id, a.name, a.image, a.email, c.name
+            HAVING (? IS NULL OR gpa >= ?) AND 
+                    (? IS NULL OR gpa <= ?) AND 
+                    (? IS NULL OR class_id = ?)
             LIMIT ? OFFSET ?`;
-        return query(sql, [pageSize, skipNumber]);
+        return query(sql, [minGpa, minGpa, maxGpa, maxGpa, classId, classId, pageSize, skipNumber]);
     },
 
-    add: (account_id, class_id) => {
+    add: (accountId, classId) => {
         const sql = `
             INSERT INTO student.students (account_id, class_id)
             VALUES (?, ?);`;
-        return query(sql, [account_id, class_id]).then(() => ({ success: true }));
+        return query(sql, [accountId, classId]).then(() => ({ success: true }));
     },
 
-    update: (student_id, class_id) => {
+    update: (studentId, classId) => {
         const sql = `
             UPDATE student.students
             SET class_id=? where id=?`;
-        return query(sql, [class_id, student_id]).then(() => ({ success: true }));
+        return query(sql, [classId, studentId]).then(() => ({ success: true }));
     },
 
-    delete: (account_id) => {
+    delete: (accountId) => {
         const sql = `
         DELETE FROM student.students where account_id = ?`;
-        return query(sql, [account_id]).then(() => ({ success: true }));
+        return query(sql, [accountId]).then(() => ({ success: true }));
     }
 }
 

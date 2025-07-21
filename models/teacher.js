@@ -10,16 +10,16 @@ const Teacher = {
         return query(sql);
     },
 
-    add: (account_id) => {
+    add: (accountId) => {
         const sql = `INSERT INTO student.teacher(account_id)
                     VALUES (?)`;
-        return query(sql, [account_id]).then(() => ({ success: true }));
+        return query(sql, [accountId]).then(() => ({ success: true }));
     },
 
-    delete: (account_id) => {
+    delete: (accountId) => {
         const sql = `DELETE FROM student.teacher 
                     WHERE account_id = ?`;
-        return query(sql, [account_id]).then(() => ({ success: true }));
+        return query(sql, [accountId]).then(() => ({ success: true }));
     }
 }
 

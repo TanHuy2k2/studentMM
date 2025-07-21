@@ -2,7 +2,7 @@ const { body } = require('express-validator');
 const { handleValidationErrors } = require('../validate/handleValidationErrors')
 
 const validateClassName = [
-    body('class_name')
+    body('className')
         .trim()
         .notEmpty().withMessage('Class name is required')
         .bail(),
@@ -11,7 +11,7 @@ const validateClassName = [
 ]
 
 const validateDelete = [
-    body('class_id')
+    body('classId')
         .trim()
         .notEmpty().withMessage('Cannot get class ID')
         .isInt().withMessage('Class ID must be int'),

@@ -27,15 +27,15 @@ exports.getClassForRegister = (req, res, next) => {
 }
 
 exports.add = async (req, res, next) => {
-    const { class_name } = req.body;
+    const { className } = req.body;
 
     try {
-        const checkResult = await classModel.checkClass(class_name);
+        const checkResult = await classModel.checkClass(className);
         if (checkResult.exists) {
             return res.json({ success: false });
         }
 
-        const result = await classModel.add(class_name);
+        const result = await classModel.add(className);
         return res.json(result);
     } catch (err) {
         return res.status(400).json({
@@ -47,15 +47,15 @@ exports.add = async (req, res, next) => {
 }
 
 exports.update = async (req, res, next) => {
-    const { class_id, class_name } = req.body;
+    const { classId, className } = req.body;
 
     try {
-        const checkResult = await classModel.checkClass(class_name);
+        const checkResult = await classModel.checkClass(className);
         if (checkResult.exists) {
             return res.json({ success: false, message: "Class already exists." });
         }
 
-        const result = await classModel.update(class_id, class_name)
+        const result = await classModel.update(classId, className)
         return res.json(result);
     } catch (err) {
         return res.status(400).json({
@@ -67,9 +67,9 @@ exports.update = async (req, res, next) => {
 }
 
 exports.softDelete = (req, res, next) => {
-    const { class_id } = req.body;
+    const { classId } = req.body;
 
-    classModel.softDelete(class_id)
+    classModel.softDelete(classId)
         .then((result) => {
             return res.json(result);
         })
@@ -83,9 +83,9 @@ exports.softDelete = (req, res, next) => {
 }
 
 exports.delete = (req, res, next) => {
-    const { class_id } = req.body;
+    const { classId } = req.body;
 
-    classModel.delete(class_id)
+    classModel.delete(classId)
         .then((result) => {
             return res.json(result);
         })
