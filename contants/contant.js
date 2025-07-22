@@ -1,5 +1,7 @@
 const SALT_ROUNDS = 10;
 const PAGE_SIZE = 4;
 const FILTER_TRUE = 1;
+const DEFAULT_PASSWORD = '123';
+const ROLE_TEACHER = 'teacher';
 
-module.exports = { SALT_ROUNDS, PAGE_SIZE, FILTER_TRUE };
+module.exports = { SALT_ROUNDS, PAGE_SIZE, FILTER_TRUE, DEFAULT_PASSWORD, ROLE_TEACHER };

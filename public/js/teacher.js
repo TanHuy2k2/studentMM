@@ -45,23 +45,49 @@ function showTeacher() {
 function addteacher() {
     document.getElementById('mainContent').innerHTML = `
     <h1>Thêm giáo viên</h1>
-    <div class="form-group">
-      <label>Tên giáo viên:</label>
-      <input type="text" id="teacherName" placeholder="Nhập tên giáo viên" required>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center; 
+            align-items: center;">
+        <button id="col" onclick="showForm()">Form</button>
+        <button id="col" onclick="showCSV()">CSV</button>
     </div>
-    <div class="form-group">
-      <label>Email:</label>
-      <input type="email" id="teacherEmail" placeholder="Nhập email" required>
+
+    <div id="formContainer">
+        <div class="form-group">
+        <label>Tên giáo viên:</label>
+        <input type="text" id="teacherName" placeholder="Nhập tên giáo viên" required>
+        </div>
+        <div class="form-group">
+        <label>Email:</label>
+        <input type="email" id="teacherEmail" placeholder="Nhập email" required>
+        </div>
+        <div class="form-group">
+        <label>Password:</label>
+        <input type="password" id="teacherPassword" placeholder="Nhập password" required>
+        </div>
+        <div class="form-group">
+        <label>Hình ảnh:</label>
+        <input type="file" id="teacherImage" name="image" accept="image/*">
+        </div>
+        <button class="submit-btn" onclick="saveTeacher()">Thêm</button>
     </div>
-    <div class="form-group">
-      <label>Password:</label>
-      <input type="password" id="teacherPassword" placeholder="Nhập password" required>
-    </div>
-    <div class="form-group">
-      <label>Hình ảnh:</label>
-      <input type="file" id="teacherImage" name="image" accept="image/*">
-    </div>
-    <button class="submit-btn" onclick="saveTeacher()">Thêm</button>`;
+
+    <div id="csvContainer" style="display: none;">
+        <div class="form-group">
+        <label>Thêm từ file CSV:</label>
+        <input type="file" id="csvFile" accept=".csv">
+        </div>
+        <button class="submit-btn" onclick="importCSV()">Nhập CSV</button>
+    </div>`;
+}
+
+function showForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('csvContainer').style.display = 'none';
+}
+
+function showCSV() {
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('csvContainer').style.display = 'block';
 }
 
 async function saveTeacher() {
@@ -189,6 +215,48 @@ async function deleteTeacher(account_id) {
         }
 
         alert('Xoá giáo viên thành công!');
+        showTeacher();
+    } catch (error) {
+        alert(error['responseJSON']['error'].msg);
+    }
+}
+
+async function importCSV() {
+    const fileInput = document.getElementById('csvFile');
+    const file = fileInput.files[0];
+    if (!file) {
+        alert('Please select a CSV file');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response_register = await $.ajax({
+            url: '/account/insert-csv',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false
+        })
+        if (response_register.length) {
+            return alert(response_register.message);
+        }
+
+        for (const item of response_register['result']) {
+            console.log(response_register);
+            const response_add = await $.ajax({
+                url: '/teacher/add',
+                type: 'POST',
+                data: { accountId: item.id },
+            });
+            if (!response_add.success) {
+                return alert(response_add.message);
+            }
+        }
+
+        alert('Thêm giáo viên thành công!');
         showTeacher();
     } catch (error) {
         alert(error['responseJSON']['error'].msg);
