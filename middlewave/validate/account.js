@@ -1,5 +1,5 @@
 const { body, validationResult } = require('express-validator');
-const { handleValidationErrors } = require('../validate/handleValidationErrors')
+const { handleValidationErrors, handleValidationFileErrors } = require('../validate/handleValidationErrors')
 
 const validateRegister = [
     body('name')
@@ -19,24 +19,11 @@ const validateRegister = [
         .bail()
         .isLength({ min: 3 }).withMessage('Password must be at least 3 characters'),
 
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                error: { msg: 'Image is required', param: 'image' }
-            });
-        }
+    handleValidationFileErrors
+];
 
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                success: false,
-                error: errors.array()[0]
-            });
-        }
-
-        next();
-    }
+const validateCsv = [
+    handleValidationFileErrors
 ];
 
 const validateLogin = [
@@ -72,7 +59,7 @@ const validateUpdate = [
 ];
 
 const validateDelete = [
-    body('account_id')
+    body('accountId')
         .trim()
         .notEmpty().withMessage('Cannot get account ID')
         .isInt().withMessage('Account ID must be int'),
@@ -80,4 +67,4 @@ const validateDelete = [
     handleValidationErrors
 ]
 
-module.exports = { validateRegister, validateLogin, validateUpdate, validateDelete };
+module.exports = { validateRegister, validateCsv, validateLogin, validateUpdate, validateDelete };

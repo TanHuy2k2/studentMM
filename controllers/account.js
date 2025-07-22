@@ -3,24 +3,33 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const { SALT_ROUNDS } = require('../contants/contant');
+const { SALT_ROUNDS, DEFAULT_PASSWORD, ROLE_TEACHER } = require('../contants/contant');
 const { first } = require('../utils/array');
+const { downloadImage } = require('../utils/dowloadImage');
+const csv = require('csv-parser');
+
+exports.registerFromData = async ({ name, email, password, role, imagePath, checkList = false }) => {
+    const fullPath = path.join(__dirname, '../public', imagePath);
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+    const existing = await accountModel.checkEmail(email);
+    if (existing.length) {
+        if (checkList) return { success: false };
+
+        fs.unlink(fullPath, () => { });
+
+        return res.json({ success: false, message: 'Email already exists' });
+    }
+    return await accountModel.register(name, email, hashedPassword, role, imagePath);
+};
 
 exports.register = async (req, res) => {
     const { name, email, password, role } = req.body;
     const imagePath = `/images/${req.file.filename}`;
-    const fullPath = path.join(__dirname, '../public', imagePath);
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     try {
-        const result = await accountModel.checkEmail(email);
-        if (result.length) {
-            fs.unlink(fullPath, () => { });
-            return res.json({ success: false, message: 'Email already exists' });
-        }
-
-        const registerResult = await accountModel.register(name, email, hashedPassword, role, imagePath);
-        return res.json(registerResult);
+        const result = await exports.registerFromData({ name, email, password, role, imagePath });
+        return res.json(result);
     } catch (err) {
         return res.status(400).json({
             success: false,
@@ -29,6 +38,38 @@ exports.register = async (req, res) => {
         });
     }
 };
+
+exports.insertCsv = (req, res, next) => {
+    const { path } = req.file;
+    const [results, registers, validEmail] = [[], [], []];
+
+    fs.createReadStream(path)
+        .pipe(csv())
+        .on('data', (data) => {
+            results.push(data)
+        })
+        .on('end', async () => {
+            try {
+                for (const row of results) {
+                    const imageUrl = row.image;
+                    const savedFileName = await downloadImage(imageUrl, 'public/images');
+                    const register = await exports.registerFromData({
+                        name: row.name,
+                        email: row.email,
+                        password: DEFAULT_PASSWORD,
+                        role: ROLE_TEACHER,
+                        imagePath: `images/${savedFileName}`,
+                        checkList: true
+                    });
+                    if (register.success) registers.push(register);
+                }
+                fs.unlinkSync(path);
+                return res.json({ result: registers, valid: validEmail });
+            } catch (err) {
+                return res.status(400).json({ message: 'Error in processing data or insert data to DB', error: err.message });
+            }
+        });
+}
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
