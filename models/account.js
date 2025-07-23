@@ -18,7 +18,7 @@ const Account = {
     },
 
     getStudentByAccount: (accId) => {
-        const sql = `SELECT ac.role, ac.name, st.id, st.class_id 
+        const sql = `SELECT ac.role, ac.name, st.id, st.class_id, ac.email 
                     FROM student.accounts ac
                     INNER JOIN student.students st
                     ON ac.id = st.account_id
@@ -27,7 +27,7 @@ const Account = {
     },
 
     getTeacherByAccount: (accId) => {
-        const sql = `SELECT ac.role, ac.name, tc.id
+        const sql = `SELECT ac.role, ac.name, tc.id, ac.email 
                     FROM student.accounts ac
                     INNER JOIN student.teacher tc
                     ON ac.id = tc.account_id

@@ -117,3 +117,32 @@ button.submit-btn {
     padding: 10px 15px;
     cursor: pointer;
 }
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-row input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    flex: 1;
+}
+
+.input-row .submit-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #1f2a40;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.input-row .submit-btn:hover {
+    background-color: #e0e0e0;
+}

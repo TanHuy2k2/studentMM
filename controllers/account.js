@@ -7,6 +7,7 @@ const { SALT_ROUNDS, DEFAULT_PASSWORD, DEFAULT_CLASS } = require('../contants/co
 const { first } = require('../utils/array');
 const { downloadImage } = require('../utils/dowloadImage');
 const csv = require('csv-parser');
+const { send } = require('../utils/mail')
 
 exports.registerFromData = async ({ name, email, password, role, imagePath, checkList = false }) => {
     const fullPath = path.join(__dirname, '../public', imagePath);
@@ -145,4 +146,20 @@ exports.logout = (req, res) => {
         httpOnly: true,
     });
     return res.status(200).json({ success: true });
+}
+
+exports.sendMail = (req, res) => {
+    const { email } = req.query;
+
+    send(email)
+        .then((result) => {
+            return res.json(result);
+        })
+        .catch((err) => {
+            return res.json({
+                success: false,
+                message: "Cannot send email.",
+                error: err.message
+            })
+        });
 }
