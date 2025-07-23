@@ -1,3 +1,5 @@
+let currentPage;
+
 const getClassFilter = () => {
   $.ajax({
     url: '/class/get-class-for-register',
@@ -90,7 +92,6 @@ function showStudent(page = 1, filter = 0) {
       i++;
       tbody.innerHTML += row;
     });
-
     document.getElementById('pagging').style.display = 'block';
   }).catch(error => {
     document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách học sinh. Vui lòng thử lại sau.</p>`;
@@ -101,28 +102,43 @@ function addStudent() {
   hidePagging();
   document.getElementById('mainContent').innerHTML = `
     <h1>Thêm học sinh</h1>
-    <div class="form-group">
-      <label>Tên học sinh:</label>
-      <input type="text" id="studentName" placeholder="Nhập tên học sinh" required>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center; 
+            align-items: center;">
+        <button id="col" onclick="showForm()">Form</button>
+        <button id="col" onclick="showCSV()">CSV</button>
     </div>
-    <div class="form-group">
-      <label>Email:</label>
-      <input type="email" id="studentEmail" placeholder="Nhập email" required>
+
+    <div id="formContainer">
+      <div class="form-group">
+        <label>Tên học sinh:</label>
+        <input type="text" id="studentName" placeholder="Nhập tên học sinh" required>
+      </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" id="studentEmail" placeholder="Nhập email" required>
+      </div>
+      <div class="form-group">
+        <label>Mật khẩu:</label>
+        <input type="password" id="studentPassword" placeholder="Nhập mật khẩu" required>
+      </div>
+      <div class="form-group">
+        <label>Lớp học:</label>
+        <select id="classSelect">
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Hình ảnh:</label>
+        <input type="file" id="studentImage" name="image" accept="image/*">
+      </div>
+      <button class="submit-btn" onclick="saveStudent()">Thêm</button>
     </div>
-    <div class="form-group">
-      <label>Mật khẩu:</label>
-      <input type="password" id="studentPassword" placeholder="Nhập mật khẩu" required>
-    </div>
-    <div class="form-group">
-      <label>Lớp học:</label>
-      <select id="classSelect">
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Hình ảnh:</label>
-      <input type="file" id="studentImage" name="image" accept="image/*">
-    </div>
-    <button class="submit-btn" onclick="saveStudent()">Thêm</button>`;
+    <div id="csvContainer" style="display: none;">
+        <div class="form-group">
+        <label>Thêm từ file CSV:</label>
+        <input type="file" id="csvFileStudent" accept=".csv">
+        </div>
+        <button class="submit-btn" onclick="importCsvStudent()">Nhập CSV</button>
+    </div>`;
 
   $.ajax({
     url: '/class/get-class-for-register',
@@ -138,6 +154,16 @@ function addStudent() {
   }).catch(error => {
     alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
   });
+}
+
+function showForm() {
+  document.getElementById('formContainer').style.display = 'block';
+  document.getElementById('csvContainer').style.display = 'none';
+}
+
+function showCSV() {
+  document.getElementById('formContainer').style.display = 'none';
+  document.getElementById('csvContainer').style.display = 'block';
 }
 
 async function saveStudent() {
@@ -180,7 +206,7 @@ async function saveStudent() {
     }
 
     alert('Thêm học sinh thành công!');
-    showStudent();
+    filterChange(0);
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }
@@ -270,7 +296,7 @@ async function saveUpdateStudent(acc_id, student_id) {
     }
 
     alert('Cập nhật thông tin thành công!');
-    showStudent();
+    filterChange(0);
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }
@@ -301,7 +327,7 @@ async function deleteStudent(account_id) {
     }
 
     alert('Xoá học sinh thành công!');
-    showStudent();
+    showStudent(currentPage);
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }
@@ -320,13 +346,65 @@ function updatePagination(filter = 0) {
     },
     pageSize: 4,
     afterPageOnClick: function (event, pageNumber) {
+      currentPage = pageNumber;
+
       showStudent(pageNumber, filter);
     },
     afterPreviousOnClick: function (event, pageNumber) {
+      currentPage = pageNumber;
+
       showStudent(pageNumber, filter);
     },
     afterNextOnClick: function (event, pageNumber) {
+      currentPage = pageNumber;
+
       showStudent(pageNumber, filter);
     },
   });
+}
+
+async function importCsvStudent() {
+  const fileInput = document.getElementById('csvFileStudent');
+  const file = fileInput.files[0];
+  if (!file) {
+    alert('Please select a CSV file');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('role', 'student');
+
+  try {
+    const response_register = await $.ajax({
+      url: '/account/insert-csv',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false
+    })
+    if (response_register.length) {
+      return alert(response_register.message);
+    }
+
+    for (const item of response_register['result']) {
+      const response_add = await $.ajax({
+        url: '/student/add',
+        type: 'POST',
+        data: { accountId: item.id, classId: item.classId },
+      });
+      if (!response_add.success) {
+        return alert(response_add.message);
+      }
+    }
+
+    alert('Insert student successfull!');
+    filterChange(0);
+  } catch (error) {
+    alert(error['responseJSON']['error'].msg);
+  }
+}
+
+function exportExcel() {
+  window.location.href = '/student/export';
 }
