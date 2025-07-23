@@ -1,5 +1,6 @@
 const studentModel = require('../models/student');
 const { PAGE_SIZE, FILTER_TRUE } = require('../contants/contant');
+const ExcelJS = require('exceljs');
 
 exports.find = async (req, res, next) => {
     let { page, minGpa, maxGpa, classId, filter } = req.query;
@@ -69,6 +70,36 @@ exports.delete = (req, res, next) => {
             return res.status(400).json({
                 success: false,
                 message: "Cannot delete student.",
+                error: err.message
+            });
+        });
+}
+
+exports.exportExcel = (req, res, next) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data students');
+    worksheet.columns = [
+        { header: 'ID', key: 'student_id', width: 10 },
+        { header: 'Name', key: 'name', width: 30 },
+        { header: 'Email', key: 'email', width: 30 },
+        { header: 'Class', key: 'class_name', width: 10 },
+        { header: 'GPA', key: 'gpa', width: 10 },
+    ];
+
+    studentModel.getDataForExport()
+        .then(async (result) => {
+            result.forEach(item => {
+                worksheet.addRow(item);
+            });
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename="data.xlsx"');
+
+            await workbook.xlsx.write(res);
+        }).catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Cannot export student.",
                 error: err.message
             });
         });

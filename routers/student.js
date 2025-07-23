@@ -15,4 +15,7 @@ studentRouter.patch('/update', validateUpdate, studentController.update);
 // Route to delete student by student id
 studentRouter.delete('/delete', validateDelete, studentController.delete);
 
+// Route for export data student to excel
+studentRouter.get('/export', studentController.exportExcel);
+
 module.exports = studentRouter;

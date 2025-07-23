@@ -231,6 +231,7 @@ async function importCSV() {
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('role', 'teacher');
 
     try {
         const response_register = await $.ajax({
