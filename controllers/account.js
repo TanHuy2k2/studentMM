@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const { SALT_ROUNDS, DEFAULT_PASSWORD, ROLE_TEACHER } = require('../contants/contant');
+const { SALT_ROUNDS, DEFAULT_PASSWORD, DEFAULT_CLASS } = require('../contants/contant');
 const { first } = require('../utils/array');
 const { downloadImage } = require('../utils/dowloadImage');
 const csv = require('csv-parser');
@@ -40,8 +40,9 @@ exports.register = async (req, res) => {
 };
 
 exports.insertCsv = (req, res, next) => {
+    const { role } = req.body;
     const { path } = req.file;
-    const [results, registers, validEmail] = [[], [], []];
+    const [results, registers] = [[], []];
 
     fs.createReadStream(path)
         .pipe(csv())
@@ -57,14 +58,17 @@ exports.insertCsv = (req, res, next) => {
                         name: row.name,
                         email: row.email,
                         password: DEFAULT_PASSWORD,
-                        role: ROLE_TEACHER,
+                        role: role,
                         imagePath: `images/${savedFileName}`,
                         checkList: true
                     });
-                    if (register.success) registers.push(register);
+                    if (register.success) {
+                        register.classId = DEFAULT_CLASS;
+                        registers.push(register);
+                    }
                 }
                 fs.unlinkSync(path);
-                return res.json({ result: registers, valid: validEmail });
+                return res.json({ result: registers });
             } catch (err) {
                 return res.status(400).json({ message: 'Error in processing data or insert data to DB', error: err.message });
             }
