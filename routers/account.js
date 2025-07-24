@@ -32,4 +32,7 @@ accountRouter.delete('/delete', validateDelete, accountController.delete);
 // Route to log out the current user
 accountRouter.get('/logout', accountController.logout);
 
+// Route to send mail
+accountRouter.get('/send-mail', accountController.sendMail);
+
 module.exports = accountRouter;
