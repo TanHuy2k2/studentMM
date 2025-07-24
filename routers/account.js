@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 });
 const upload_image = multer({ storage: storage });
 const upload_file = multer({ dest: 'public/uploads/' });
-const { validateRegister, validateCsv, validateLogin, validateUpdate, validateDelete } = require('../middlewave/validate/account');
+const { validateRegister, validateCsv, validateLogin, validateUpdate, validateDelete, validateNewPassword } = require('../middlewave/validate/account');
 
 // Route to register a new account, with image upload support
 accountRouter.post('/register', upload_image.single('image'), validateRegister, accountController.register);
@@ -34,5 +34,8 @@ accountRouter.get('/logout', accountController.logout);
 
 // Route to send mail
 accountRouter.get('/send-mail', accountController.sendMail);
+
+// Route to change password
+accountRouter.patch('/change-password', validateNewPassword, accountController.changePassword);
 
 module.exports = accountRouter;
