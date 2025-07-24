@@ -41,6 +41,12 @@ const Account = {
         return query(sql, [name, email, image, accId]).then(() => ({ success: true }));
     },
 
+    updatePassword: (accId, password) => {
+        const sql = `UPDATE student.accounts
+                    SET password=? WHERE id=?`;
+        return query(sql, [password, accId]).then(() => ({ success: true }));
+    },
+
     delete: (accId) => {
         const sql = `DELETE FROM student.accounts where id=?`;
         return query(sql, [accId]).then(() => ({ success: true }));

@@ -67,4 +67,15 @@ const validateDelete = [
     handleValidationErrors
 ]
 
-module.exports = { validateRegister, validateCsv, validateLogin, validateUpdate, validateDelete };
+const validateNewPassword = [
+    body('newPassword')
+        .notEmpty().withMessage('New password is required')
+        .bail()
+        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
+        .matches(/[a-zA-Z]/).withMessage('Password must contain at least one letter')
+        .matches(/[^a-zA-Z0-9]/).withMessage('Password must contain at least one special character'),
+
+    handleValidationErrors
+]
+
+module.exports = { validateRegister, validateCsv, validateLogin, validateUpdate, validateDelete, validateNewPassword };

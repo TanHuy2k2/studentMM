@@ -76,36 +76,50 @@ exports.insertCsv = (req, res, next) => {
         });
 }
 
+const verifyAccount = async (email, password) => {
+    const account = await accountModel.checkEmail(email);
+    if (!account.length) {
+        return { success: false, message: "Email not found" };
+    }
+
+    const firstAccount = first(account);
+    const isMatch = await bcrypt.compare(password, firstAccount.password);
+    if (!isMatch) {
+        return { success: false, message: "Incorrect password" };
+    }
+
+    return { success: true, userId: firstAccount.id };
+};
+
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const result = await accountModel.checkEmail(email);
-        if (!result.length) {
-            return res.json({ success: false });
-        }
-
-        const isMatch = await bcrypt.compare(password, first(result).password);
-        if (!isMatch) {
-            return res.json({ success: false });
+        const verification = await verifyAccount(email, password);
+        if (!verification.success) {
+            return res.json({ success: false, message: verification.message });
         }
 
         const privateKey = fs.readFileSync('./key/privateKey.pem');
-        const token = jwt.sign({ id: first(result).id }, privateKey, { algorithm: 'RS256', expiresIn: '3h' });
+        const token = jwt.sign({ id: verification.userId }, privateKey, {
+            algorithm: 'RS256',
+            expiresIn: '3h'
+        });
+
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 3 * 60 * 60 * 1000
         });
 
-        return res.json({ 'success': true });
+        return res.json({ success: true });
     } catch (err) {
         return res.status(400).json({
             success: false,
-            message: "Cannot login account.",
+            message: "Login unsuccessful.",
             error: err.message
         });
     }
-}
+};
 
 exports.update = async (req, res) => {
     let { accId, name, email, image } = req.body;
@@ -153,6 +167,12 @@ exports.sendMail = (req, res) => {
 
     send(email)
         .then((result) => {
+            res.cookie('codeValidate', result.code, {
+                maxAge: 5 * 60 * 1000,
+                httpOnly: true,
+                secure: false,
+            });
+
             return res.json(result);
         })
         .catch((err) => {
@@ -162,4 +182,32 @@ exports.sendMail = (req, res) => {
                 error: err.message
             })
         });
+}
+
+exports.changePassword = async (req, res) => {
+    const { email, oldPassword, newPassword, code } = req.body;
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    try {
+        const checkOldPassword = await verifyAccount(email, oldPassword);
+        if (!checkOldPassword.success) {
+            return res.json({ success: false, message: checkOldPassword.message });
+        }
+
+        const savedCode = req.cookies.codeValidate;
+        if (parseInt(savedCode) !== parseInt(code)) {
+            return res.json({ success: false, message: "Code is incorrect!" });
+        }
+
+        const updatePassword = await accountModel.updatePassword(checkOldPassword.userId, hashedPassword);
+
+        res.clearCookie('codeValidate');
+        return res.json(updatePassword);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Change password unsuccessfully.",
+            error: err.message
+        });
+    }
 }
