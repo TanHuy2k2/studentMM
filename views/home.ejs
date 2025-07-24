@@ -13,6 +13,7 @@
     <script src="/public/js/score.js"></script>
     <script src="/public/js/student.js"></script>
     <script src="/public/js/teacher.js"></script>
+    <script src="/public/js/account.js"></script>
 </head>
 
 <body>
@@ -20,6 +21,7 @@
         <h2>Quản lý học sinh</h2>
         <button onclick="window.location.href='/'">Thông tin cá nhân</button>
         <input type="hidden" id="ID" value="<%= data.id %>">
+        <input type="hidden" id="userEmail" value="<%= data.email %>">
         <% switch (data.role) { case 'admin' : %>
             <button onclick="showClass()">Lớp học</button>
             <button onclick="filterChange(0)">Học sinh</button>
@@ -84,6 +86,9 @@
                                     Học sinh
                                     <% break; } %>
                     </p>
+                    <% if (data.role !='admin' ){ %>
+                        <p style="font-size: 13px;"><a href="#" onclick="changePassword()">Đổi mật khẩu</a></p>
+                        <% } %>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
