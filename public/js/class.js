@@ -1,13 +1,13 @@
 function showClass() {
     hidePagging();
     document.getElementById('mainContent').innerHTML = `
-    <h1>Lớp học</h1>
-    <button id="btn-check" style="float: right;" onclick="addCLass()">Thêm lớp học</button>
+    <h1>Class</h1>
+    <button id="btn-check" style="float: right;" onclick="addCLass()">Add Class</button>
     <table border="1">
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 60%;">Lớp học</th>
+          <th style="width: 60%;">Class</th>
           <th style="width: 30%;"></th>
         </tr>
       </thead>
@@ -27,33 +27,33 @@ function showClass() {
             <td id="col">${i}</td>
             <td>${res.name}</td>
             <td id="col">
-                <button id="btn-check" onclick="updateClass(this, ${res.id})">Cập nhật</button>
-                <button id="btn-check" onclick="deleteSoftClass(${res.id})">Xoá mềm</button>
-                <button id="btn-check" onclick="deleteHardClass(${res.id})">Xoá</button>
+                <button id="btn-check" onclick="updateClass(this, ${res.id})">Edit</button>
+                <button id="btn-check" onclick="deleteSoftClass(${res.id})">Soft delete</button>
+                <button id="btn-check" onclick="deleteHardClass(${res.id})">Delete</button>
             </td>
           </tr>`;
             i++;
             tbody.innerHTML += row;
         });
     }).catch(error => {
-        document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách môn học. Vui lòng thử lại sau.</p>`;
+        document.getElementById('mainContent').innerHTML = `<p>Unable to load course list. Please try again later.</p>`;
     });
 }
 
 function addCLass() {
     document.getElementById('mainContent').innerHTML = `
-    <h1>Thêm lớp học</h1>
+    <h1>Add Class</h1>
     <div class="form-group">
-      <label>Tên lớp học:</label>
-      <input type="text" id="className" placeholder="Nhập tên lớp học" required>
+      <label>Class name:</label>
+      <input type="text" id="className" placeholder="Input class name" required>
     </div>
-    <button class="submit-btn" onclick="saveClass()">Thêm</button>`;
+    <button class="submit-btn" onclick="saveClass()">Add</button>`;
 }
 
 function saveClass() {
     const className = $('#className').val();
     if (!className) {
-        alert("Vui lòng nhập tên lớp học.");
+        alert("Please enter Class name.");
         return;
     }
 
@@ -65,13 +65,13 @@ function saveClass() {
         }
     }).then(response => {
         if (response.success) {
-            alert("Thêm lớp học thành công!");
+            alert("Add Class successfully!");
             showClass();
         } else {
-            alert("Đã có lớp này");
+            alert("This class is exist!");
         }
     }).catch(error => {
-        alert("Đã xảy ra lỗi khi thêm lớp học.");
+        alert("An error occurred while adding Class.");
     });
 }
 
@@ -81,7 +81,7 @@ function updateClass(button, class_id) {
     const value = cell.textContent.trim();
     cell.innerHTML = `<input type="text" value="${value}" style="width: 100px;" required>`;
 
-    button.textContent = "Lưu";
+    button.textContent = "Save";
     button.onclick = function () {
         saveClassEdit(this, class_id);
     };
@@ -92,7 +92,7 @@ function saveClassEdit(button, class_id) {
     const cell = row.cells[1];
     const newValue = cell.querySelector("input").value;
     if (!newValue) {
-        alert("Vui lòng nhập tên lớp học.");
+        alert("Please input Class name.");
         return;
     }
 
@@ -105,15 +105,15 @@ function saveClassEdit(button, class_id) {
         }
     }).then(response => {
         if (response.success) {
-            alert("Cập nhật lớp học thành công!");
+            alert("Update class successfully!");
             showClass();
 
-            button.textContent = "Cập nhật";
+            button.textContent = "Update";
             button.onclick = function () {
                 updateClass(this, class_id);
             };
         } else {
-            alert("Thêm lớp học thất bại!");
+            alert("This class is exist!");
         }
     }).catch(error => {
         alert(error['responseJSON']['error'].msg);
@@ -129,18 +129,18 @@ function deleteSoftClass(class_id) {
         }
     }).then(response => {
         if (response.success) {
-            alert("Xoá mềm lớp học thành công!");
+            alert("Soft delete class successfully!");
             showClass();
         } else {
-            alert("Xoá mềm lớp học thất bại!");
+            alert("Soft delete class unsucessfully!");
         }
     }).catch(error => {
-        alert("Đã xảy ra lỗi khi xoá mềm lớp học.");
+        alert("An error occurred while delete soft class.");
     });
 }
 
 function deleteHardClass(class_id) {
-    if (!confirm("Bạn có chắc chắn muốn xoá lớp học này?")) {
+    if (!confirm("Are you sure you want to delete this Class?")) {
         return;
     }
 
@@ -152,12 +152,12 @@ function deleteHardClass(class_id) {
         }
     }).then(response => {
         if (response.success) {
-            alert("Xoá lớp học thành công!");
+            alert("Delete class successfuly");
             showClass();
         } else {
-            alert("Xoá lớp học thất bại!");
+            alert("Delete class unsuccessfuly!");
         }
     }).catch(error => {
-        alert("Đã xảy ra lỗi khi xoá cứng lớp học.");
+        alert("An error occurred while delete class.");
     });
 }

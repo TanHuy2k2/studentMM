@@ -18,20 +18,20 @@
 
 <body>
     <div class="sidebar">
-        <h2>Quản lý học sinh</h2>
-        <button onclick="window.location.href='/'">Thông tin cá nhân</button>
+        <h2>Student management</h2>
+        <button onclick="window.location.href='/'">Infomation</button>
         <input type="hidden" id="ID" value="<%= data.id %>">
         <input type="hidden" id="userEmail" value="<%= data.email %>">
         <% switch (data.role) { case 'admin' : %>
-            <button onclick="showClass()">Lớp học</button>
-            <button onclick="filterChange(0)">Học sinh</button>
-            <button onclick="showTeacher()">Giáo viên</button>
-            <button onclick="showSubject()">Môn học</button>
+            <button onclick="showClass()">Class</button>
+            <button onclick="filterChange(0)">Student</button>
+            <button onclick="showTeacher()">Teacher</button>
+            <button onclick="showSubject()">Subject</button>
             <% break; case 'teacher' : %>
-                <button onclick="showSubjectTeacher()">Môn học</button>
+                <button onclick="showSubjectTeacher()">Subject</button>
                 <% break; case 'student' : %>
-                    <button onclick="showScore()">Kết quả học tập</button>
-                    <button onclick="showSubjectForRegister()">Đăng kí môn học</button>
+                    <button onclick="showScore()">Result</button>
+                    <button onclick="showSubjectForRegister()">Register subject</button>
                     <% break; } %>
     </div>
 
@@ -40,7 +40,7 @@
             align-items: center; flex-wrap: wrap;">
 
             <div class="form-group" style="display: flex; flex-direction: column;">
-                <label for="classFilter" style="margin-bottom: 5px; font-weight: bold;">Lớp học:</label>
+                <label for="classFilter" style="margin-bottom: 5px; font-weight: bold;">Class:</label>
                 <select id="classFilter"
                     style="padding: 5px; width: 200px; border: 1px solid #ccc; border-radius: 5px;">
                     <option value="">None</option>
@@ -55,46 +55,46 @@
 
             <button onclick="filterChange(1)"
                 style="padding: 10px 20px; margin-top: 5px; background-color: #1f2a40; color: white; margin-left: 10px;">
-                Lọc
+                Filter
             </button>
 
             <button onclick="restoreFilter()"
                 style="padding: 10px 20px; margin-top: 5px; background-color: #1f2a40; color: white; margin-left: 10px;">
-                Khôi phục
+                Restore
             </button>
             <button onclick="exportExcel()"
                 style="padding: 10px 20px; margin-top: 5px; background-color: #1f2a40; color: white; margin-left: 10px;">
-                Export data
+                Export
             </button>
         </div>
 
         <div class="main" id="mainContent">
-            <h3>Chào mừng đến quản lý học sinh</h3>
+            <h3>Welcome to student management</h3>
             <div style="display: flex; gap: 20px; margin-top: 20px;">
                 <div
                     style="flex: 1; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff;">
-                    <h4>Thông tin cá nhân</h4>
-                    <p><strong>Tên:</strong>
+                    <h4>Infomation</h4>
+                    <p><strong>Name:</strong>
                         <%= data.name %>
                     </p>
-                    <p><strong>Vai trò:</strong>
+                    <p><strong>Role:</strong>
                         <% switch (data.role) { case 'admin' : %>
-                            Quản trị viên
+                            Admin
                             <% break; case 'teacher' : %>
-                                Giáo viên
+                                Teacher
                                 <% break; case 'student' : %>
-                                    Học sinh
+                                    Student
                                     <% break; } %>
                     </p>
                     <% if (data.role !='admin' ){ %>
-                        <p style="font-size: 13px;"><a href="#" onclick="changePassword()">Đổi mật khẩu</a></p>
+                        <p style="font-size: 13px;"><a href="#" onclick="changePassword()">Change password</a></p>
                         <% } %>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <button onclick="logout()"
                         style="padding: 10px 20px; border: none; background-color: #dc3545; color: white; border-radius: 5px; cursor: pointer;">
-                        Đăng xuất
+                        Logout
                     </button>
                 </div>
             </div>
@@ -110,13 +110,13 @@
             type: 'GET',
         }).then(response => {
             if (response.success) {
-                alert("Đăng xuất thành công!");
+                alert("Logout successful!");
                 window.location.href = "/";
             } else {
-                alert("Đăng xuất thất bại!");
+                alert("logout unsuccesfully");
             }
         }).catch(error => {
-            alert("Đã xảy ra lỗi khi đăng xuất.");
+            alert("An error occurred while logging out.");
         });
     }
 </script>

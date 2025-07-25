@@ -14,7 +14,7 @@ const getClassFilter = () => {
       classSelect.appendChild(option);
     });
   }).catch(error => {
-    alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
+    alert('Unable to load class list. Please try again later.');
   });
 }
 
@@ -44,15 +44,15 @@ function showStudent(page = 1, filter = 0) {
   const maxGpa = document.getElementById('max_gpa').value;
 
   document.getElementById('mainContent').innerHTML = `
-    <button id="btn-check" style="float: right;" onclick="addStudent()">Thêm học sinh</button>
+    <button id="btn-check" style="float: right;" onclick="addStudent()">Add student</button>
     <table border="1">
       <thead>
         <tr>
           <th style="width: 2%;" id="col">#</th>
-          <th style="width: 10%;" id="col">Hình ảnh</th>
-          <th style="width: 15%;">Tên</th>
+          <th style="width: 10%;" id="col">image</th>
+          <th style="width: 15%;">Name</th>
           <th style="width: 20%;">Email</th>
-          <th style="width: 7%;">Lớp học</th>
+          <th style="width: 7%;">Class</th>
           <th style="width: 5%;" id="col">GPA</th>
           <th style="width: 13%;" id="col"></th>
         </tr>
@@ -73,7 +73,7 @@ function showStudent(page = 1, filter = 0) {
     }
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
-    tbody.innerHTML = ''; // Clear previous data
+    tbody.innerHTML = '';
     let i = 1;
     response['result'].forEach(res => {
       const row = `
@@ -85,8 +85,8 @@ function showStudent(page = 1, filter = 0) {
           <td>${res.class_name}</td>
           <td id="col">${res.gpa}</td>
           <td id="col">
-            <button id="btn-check" onclick='updateStudent(${JSON.stringify(res)})'>Cập nhật</button>
-            <button id="btn-check" onclick="deleteStudent(${res.acc_id})">Xoá</button>
+            <button id="btn-check" onclick='updateStudent(${JSON.stringify(res)})'>Update</button>
+            <button id="btn-check" onclick="deleteStudent(${res.acc_id}, ${res.student_id})">Delete</button>
           </td>
         </tr>`;
       i++;
@@ -94,14 +94,14 @@ function showStudent(page = 1, filter = 0) {
     });
     document.getElementById('pagging').style.display = 'block';
   }).catch(error => {
-    document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách học sinh. Vui lòng thử lại sau.</p>`;
+    document.getElementById('mainContent').innerHTML = `<p>Unable to load class list. Please try again later.</p>`;
   });
 }
 
 function addStudent() {
   hidePagging();
   document.getElementById('mainContent').innerHTML = `
-    <h1>Thêm học sinh</h1>
+    <h1>Add student</h1>
     <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center; 
             align-items: center;">
         <button id="col" onclick="showForm()">Form</button>
@@ -110,34 +110,34 @@ function addStudent() {
 
     <div id="formContainer">
       <div class="form-group">
-        <label>Tên học sinh:</label>
-        <input type="text" id="studentName" placeholder="Nhập tên học sinh" required>
+        <label>Student name:</label>
+        <input type="text" id="studentName" placeholder="Enter student name" required>
       </div>
       <div class="form-group">
         <label>Email:</label>
-        <input type="email" id="studentEmail" placeholder="Nhập email" required>
+        <input type="email" id="studentEmail" placeholder="Enter email" required>
       </div>
       <div class="form-group">
-        <label>Mật khẩu:</label>
-        <input type="password" id="studentPassword" placeholder="Nhập mật khẩu" required>
+        <label>Password:</label>
+        <input type="password" id="studentPassword" placeholder="Enter password" required>
       </div>
       <div class="form-group">
-        <label>Lớp học:</label>
+        <label>Class:</label>
         <select id="classSelect">
         </select>
       </div>
       <div class="form-group">
-        <label>Hình ảnh:</label>
+        <label>Image:</label>
         <input type="file" id="studentImage" name="image" accept="image/*">
       </div>
-      <button class="submit-btn" onclick="saveStudent()">Thêm</button>
+      <button class="submit-btn" onclick="saveStudent()">Add</button>
     </div>
     <div id="csvContainer" style="display: none;">
         <div class="form-group">
-        <label>Thêm từ file CSV:</label>
+        <label>Add from CSV file:</label>
         <input type="file" id="csvFileStudent" accept=".csv">
         </div>
-        <button class="submit-btn" onclick="importCsvStudent()">Nhập CSV</button>
+        <button class="submit-btn" onclick="importCsvStudent()">Add CSV</button>
     </div>`;
 
   $.ajax({
@@ -152,7 +152,7 @@ function addStudent() {
       classSelect.appendChild(option);
     });
   }).catch(error => {
-    alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
+    alert('Unable to load class list. Please try again later.');
   });
 }
 
@@ -180,7 +180,7 @@ async function saveStudent() {
   formData.append('image', imageFile);
 
   if (!name || !email || !password || !classId || !imageFile) {
-    alert('Vui lòng điền đầy đủ thông tin.');
+    alert('Please fill in all information.');
     return;
   }
 
@@ -205,7 +205,7 @@ async function saveStudent() {
       throw new Error('Failed to add student');
     }
 
-    alert('Thêm học sinh thành công!');
+    alert('Add student successfully!');
     filterChange(0);
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
@@ -214,23 +214,23 @@ async function saveStudent() {
 
 function updateStudent(res) {
   document.getElementById('mainContent').innerHTML = `
-    <h1>Cập nhật học sinh</h1>
+    <h1>Update student</h1>
     <div class="form-group">
-      <label>Hình ảnh:</label>
+      <label>Image:</label>
       <img src="${res.image ? res.image : ''}" style="width: 50px; height: 50px;">
       <input type="hidden" id="oldImage" value="${res.image}">
       <input type="file" id="studentImage" name="image" accept="image/*">
     </div>
     <div class="form-group">
-      <label>Tên học sinh:</label>
-      <input type="text" id="studentName" placeholder="Nhập tên học sinh" value="${res.name}" required>
+      <label>Student name:</label>
+      <input type="text" id="studentName" placeholder="Enter student name" value="${res.name}" required>
     </div>
     <div class="form-group">
       <label>Email:</label>
-      <input type="email" id="studentEmail" placeholder="Nhập email" value="${res.email}" required>
+      <input type="email" id="studentEmail" placeholder="Enter email" value="${res.email}" required>
     </div>
     <div class="form-group">
-      <label>Lớp học:</label>
+      <label>Class:</label>
       <select id="classSelect">
       </select>
     </div>
@@ -254,7 +254,7 @@ function updateStudent(res) {
       classSelect.appendChild(option);
     });
   }).catch(error => {
-    alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
+    alert('Unable to load class list. Please try again later.');
   });
 }
 
@@ -270,7 +270,7 @@ async function saveUpdateStudent(acc_id, student_id) {
   formData.append('image', imageFile);
 
   if (!name || !email || !classId || !imageFile) {
-    alert('Vui lòng điền đầy đủ thông tin.');
+    alert('Please fill in all information.');
     return;
   }
 
@@ -283,7 +283,7 @@ async function saveUpdateStudent(acc_id, student_id) {
       contentType: false
     });
     if (!response_update_acc.success) {
-      return alert("Không thành công");
+      return alert("Update unsuccessful");
     }
 
     const response_update_student = await $.ajax({
@@ -292,29 +292,38 @@ async function saveUpdateStudent(acc_id, student_id) {
       data: { studentId: student_id, classId: classId },
     });
     if (!response_update_student.success) {
-      throw new Error('Không thể sửa dữ liệu');
+      return alert("Update unsuccessful");
     }
 
-    alert('Cập nhật thông tin thành công!');
+    alert('Update successful!');
     filterChange(0);
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }
 }
 
-async function deleteStudent(account_id) {
-  if (!confirm("Bạn có chắc chắn muốn xoá học sinh này?")) {
+async function deleteStudent(account_id, student_id) {
+  if (!confirm("Are you sure to delete this student?")) {
     return;
   }
 
   try {
+    const response_delete_score = await $.ajax({
+      url: '/score/delete',
+      type: 'DELETE',
+      data: { studentId: student_id },
+    });
+    if (!response_delete_score.success) {
+      return alert("Delete unsuccessful!");
+    }
+
     const response_delete_stu = await $.ajax({
       url: '/student/delete',
       type: 'DELETE',
       data: { accountId: account_id },
     });
     if (!response_delete_stu.success) {
-      return alert("Không thành công")
+      return alert("Delete unsuccessful!");
     }
 
     const response_delete_acc = await $.ajax({
@@ -323,10 +332,10 @@ async function deleteStudent(account_id) {
       data: { accountId: account_id }
     });
     if (!response_delete_acc.success) {
-      return alert("Không thành công");
+      return alert("Delete unsuccessful!");
     }
 
-    alert('Xoá học sinh thành công!');
+    alert('Delete student successful!');
     showStudent(currentPage);
   } catch (error) {
     alert(error['responseJSON']['error'].msg);

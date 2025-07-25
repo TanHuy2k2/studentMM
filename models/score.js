@@ -42,6 +42,12 @@ const Score = {
             SET attendance = ?, midterm = ?, final = ?
             WHERE subject_id = ? AND student_id = ?`;
         return query(sql, [attendance, midterm, final, subjectId, studentId]);
+    },
+
+    delete: (studentId) => {
+        const sql = `DELETE FROM student.score
+                    WHERE student_id = ?`;
+        return query(sql, [studentId]).then(() => ({ success: true }));
     }
 }
 

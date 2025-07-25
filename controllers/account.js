@@ -9,7 +9,7 @@ const { downloadImage } = require('../utils/dowloadImage');
 const csv = require('csv-parser');
 const { send } = require('../utils/mail');
 
-exports.registerFromData = async ({ name, email, password, role, imagePath, checkList = false }) => {
+exports.registerFromData = async ({ res, name, email, password, role, imagePath, checkList = false }) => {
     const fullPath = path.join(__dirname, '../public', imagePath);
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
     const imagePath = `/images/${req.file.filename}`;
 
     try {
-        const result = await exports.registerFromData({ name, email, password, role, imagePath });
+        const result = await exports.registerFromData({ res, name, email, password, role, imagePath });
         return res.json(result);
     } catch (err) {
         return res.status(400).json({

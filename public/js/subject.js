@@ -1,12 +1,12 @@
 function showSubjectTeacher() {
   hidePagging();
   document.getElementById('mainContent').innerHTML = `
-    <h1>Môn học</h1>
+    <h1>Subject</h1>
     <table border="1">
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 80%;">Môn học</th>
+          <th style="width: 80%;">Subject</th>
           <th style="width: 10%;"></th>
         </tr>
       </thead>
@@ -37,20 +37,20 @@ function showSubjectTeacher() {
       });
     })
     .catch(error => {
-      document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách môn học. Vui lòng thử lại sau.</p>`;
+      document.getElementById('mainContent').innerHTML = `<p>Failed to load Subject list. Please try again later.</p>`;
     });
 }
 
 function showSubject() {
   document.getElementById('mainContent').innerHTML = `
-    <h1>Môn học</h1>
-    <button id="btn-check" style="float: right;" onclick="addSubject()">Thêm môn học</button>
+    <h1>Subject</h1>
+    <button id="btn-check" style="float: right;" onclick="addSubject()">Add Subject</button>
     <table border="1">
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 40%;">Môn học</th>
-          <th style="width: 30%;">Giáo viên</th>
+          <th style="width: 40%;">Subject</th>
+          <th style="width: 30%;">Teacher</th>
           <th style="width: 20%;"></th>
         </tr>
       </thead>
@@ -72,8 +72,8 @@ function showSubject() {
             <td>${subject.subject_name}</td>
             <td>${subject.teacher_name}</td>
             <td id="col">
-              <button id="btn-check" onclick='update(${JSON.stringify(subject)})'>Cập nhật</button>
-              <button id="btn-check" onclick="deleteSubject(${subject.subject_id})">Xoá</button>
+              <button id="btn-check" onclick='update(${JSON.stringify(subject)})'>Update</button>
+              <button id="btn-check" onclick="deleteSubject(${subject.subject_id})">Delete</button>
             </td>
           </tr>
         `;
@@ -82,23 +82,23 @@ function showSubject() {
       });
     })
     .catch(error => {
-      document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách môn học. Vui lòng thử lại sau.</p>`;
+      document.getElementById('mainContent').innerHTML = `<p>Failed to load Subject list. Please try again later.</p>`;
     });
 }
 
 function addSubject() {
   document.getElementById('mainContent').innerHTML = `
-    <h1>Thêm môn học</h1>
+    <h1>Add Subject</h1>
     <div class="form-group">
-      <label>Tên môn học:</label>
-      <input type="text" id="subjectName" placeholder="Nhập tên môn học" required>
+      <label>Subject name:</label>
+      <input type="text" id="subjectName" placeholder="Enter subject name" required>
     </div>
     <div class="form-group">
-      <label>Giáo viên:</label>
+      <label>Teacher:</label>
       <select id="teacherSelect">
       </select>
     </div>
-    <button class="submit-btn" onclick="saveSubject()">Thêm</button>`;
+    <button class="submit-btn" onclick="saveSubject()">Add</button>`;
 
   $.ajax({
     url: '/teacher/find',
@@ -112,7 +112,7 @@ function addSubject() {
       teacherSelect.appendChild(option);
     });
   }).catch(error => {
-    alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
+    alert('Failed to load Subject list. Please try again later.');
   });
 }
 
@@ -121,7 +121,7 @@ async function saveSubject() {
   const teacherId = $('#teacherSelect').val();
 
   if (!subjectName || !teacherId) {
-    alert("Vui lòng nhập đầy đủ thông tin");
+    alert("Please fill in information.");
     return;
   }
 
@@ -132,7 +132,7 @@ async function saveSubject() {
       data: { subjectName: subjectName },
     });
     if (!response_add_subject.success) {
-      return alert("Không thành công")
+      return alert("Add unsuccessful")
     }
 
     const response_add_subject_teacher = await $.ajax({
@@ -141,10 +141,10 @@ async function saveSubject() {
       data: { subjectId: response_add_subject.subject_id, teacherId: parseInt(teacherId) }
     });
     if (!response_add_subject_teacher.success) {
-      return alert("Không thành công");
+      return alert("Add unsuccessful");
     }
 
-    alert('Thêm môn học thành công!');
+    alert('Add Subject successfully!');
     showSubject();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
@@ -153,18 +153,18 @@ async function saveSubject() {
 
 function update(subject) {
   document.getElementById('mainContent').innerHTML = `
-    <h1>Cập nhật môn học</h1>
+    <h1>Update Subject</h1>
     <div class="form-group">
-      <label>Tên môn học:</label>
-      <input type="text" id="subjectName" placeholder="Nhập tên môn học" value="${subject.subject_name}" required>
+      <label>Subject name:</label>
+      <input type="text" id="subjectName" placeholder="Enter subject name" value="${subject.subject_name}" required>
     </div>
     <div class="form-group">
-      <label>Giáo viên:</label>
+      <label>Teacher:</label>
       <select id="teacherSelect">
       </select>
     </div>
     
-    <button class="submit-btn" onclick="saveUpdate(${subject.subject_id}, ${subject.teacher_id})">Cập nhật</button>`;
+    <button class="submit-btn" onclick="saveUpdate(${subject.subject_id}, ${subject.teacher_id})">Update</button>`;
 
   $.ajax({
     url: '/teacher/find',
@@ -183,7 +183,7 @@ function update(subject) {
       teacherSelect.appendChild(option);
     });
   }).catch(error => {
-    alert('Không thể tải danh sách lớp học. Vui lòng thử lại sau.');
+    alert('Failed to load Subject list. Please try again later.');
   });
 }
 
@@ -191,7 +191,7 @@ async function saveUpdate(subject_id, teacher_id) {
   const subjectName = $('#subjectName').val();
   const teacherId = $('#teacherSelect').val();
   if (!subjectName) {
-    alert("Vui lòng nhập tên môn học.");
+    alert("Please enter subject name.");
     return;
   }
 
@@ -202,7 +202,7 @@ async function saveUpdate(subject_id, teacher_id) {
       data: { subjectId: subject_id, subjectName: subjectName },
     });
     if (!response_update_subject.success) {
-      return alert("Không thành công")
+      return alert("Update unsuccessful")
     }
 
     if (teacherId != teacher_id) {
@@ -212,11 +212,11 @@ async function saveUpdate(subject_id, teacher_id) {
         data: { subjectId: subject_id, teacherId: teacherId }
       });
       if (!response_update_subject_teacher.success) {
-        return alert("Không thành công");
+        return alert("Update unsuccessful");
       }
     }
 
-    alert('Cập nhật môn học thành công!');
+    alert('Update subject successfully!');
     showSubject();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
@@ -224,7 +224,7 @@ async function saveUpdate(subject_id, teacher_id) {
 }
 
 async function deleteSubject(subject_id) {
-  if (!confirm("Bạn có chắc chắn muốn xoá môn học này?")) {
+  if (!confirm("Are you sure to delete this Subject??")) {
     return;
   }
 
@@ -235,10 +235,10 @@ async function deleteSubject(subject_id) {
       data: { subjectId: subject_id },
     });
     if (!response_delete.success) {
-      return alert("Không thành công")
+      return alert("Delete unsuccessful")
     }
 
-    alert('Xoá môn học thành công!');
+    alert('Delete Subject successful!');
     showSubject();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
@@ -247,13 +247,13 @@ async function deleteSubject(subject_id) {
 
 function showSubjectForRegister() {
   document.getElementById('mainContent').innerHTML = `
-    <h1>Môn học</h1>
+    <h1>Subject</h1>
     <table border="1">
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 40%;">Môn học</th>
-          <th style="width: 30%;">Giáo viên</th>
+          <th style="width: 40%;">Subject</th>
+          <th style="width: 30%;">Teacher</th>
           <th style="width: 20%;"></th>
         </tr>
       </thead>
@@ -279,7 +279,7 @@ function showSubjectForRegister() {
             <td>${subject.subject_name}</td>
             <td>${subject.teacher_name}</td>
             <td id="col">
-              <button id="btn-check" onclick='registerSubject(${student_id}, ${subject.subject_id})'>Đăng kí</button>
+              <button id="btn-check" onclick='registerSubject(${student_id}, ${subject.subject_id})'>Register</button>
             </td>
           </tr>
         `;
@@ -288,7 +288,7 @@ function showSubjectForRegister() {
       });
     })
     .catch(error => {
-      document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách môn học. Vui lòng thử lại sau.</p>`;
+      document.getElementById('mainContent').innerHTML = `<p>Failed to load Subject list. Please try again later.</p>`;
     });
 }
 
@@ -300,11 +300,11 @@ async function registerSubject(student_id, subject_id) {
       data: { studentId: student_id, subjectId: subject_id },
     });
     if (!response.success) {
-      return alert("Không thành công")
+      return alert("Add score unsuccessfully")
     }
 
-    alert('Đăng kí môn học thành công!');
-    showScore();
+    alert('Add Subject successfully!');
+    showSubjectForRegister();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }

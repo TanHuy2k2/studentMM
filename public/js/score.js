@@ -1,15 +1,15 @@
 function showScore() {
   hidePagging();
   document.getElementById('mainContent').innerHTML = `
-    <h1>Kết quả học tập</h1>
+    <h1>Results</h1>
     <table border="1">
       <thead>
         <tr>
-          <th>Môn học</th>
-          <th id="col">Chuyên cần</th>
-          <th id="col">Giữa kì</th>
-          <th id="col">Cuối kì</th>
-          <th id="col">Điểm tổng</th>
+          <th>Subject</th>
+          <th id="col">Attendance</th>
+          <th id="col">Midterm</th>
+          <th id="col">Final</th>
+          <th id="col">Average</th>
         </tr>
       </thead>
       <tbody id="scoreBody">
@@ -37,22 +37,22 @@ function showScore() {
       tbody.innerHTML += row;
     });
   }).catch(error => {
-    document.getElementById('mainContent').innerHTML = `<p>Không thể tải kết quả học tập. Vui lòng thử lại sau.</p>`;
+    document.getElementById('mainContent').innerHTML = `<p>Unable to load results. Please try again later.</p>`;
   });
 }
 
 function showStudentScore(subject_id) {
   document.getElementById('mainContent').innerHTML = `
-    <h1>Môn học</h1>
+    <h1>Subject</h1>
     <table border="1" style="text-align: center;">
       <thead>
         <tr>
           <th style="width: 5%;" id="col">#</th>
-          <th style="width: 35%;">Tên học sinh</th>
-          <th style="width: 12%;" id="col">Chuyên cần</th>
-          <th style="width: 12%;" id="col">Giữa kì</th>
-          <th style="width: 12%;" id="col">Cuối kì</th>
-          <th style="width: 12%;" id="col">Điểm trung bình</th>
+          <th style="width: 35%;">Name student</th>
+          <th style="width: 12%;" id="col">Attendance</th>
+          <th style="width: 12%;" id="col">Midterm</th>
+          <th style="width: 12%;" id="col">Final</th>
+          <th style="width: 12%;" id="col">Average</th>
           <th style="width: 12%;"></th>
         </tr>
       </thead>
@@ -78,29 +78,50 @@ function showStudentScore(subject_id) {
             <td id="col">${score.midterm}</td>
             <td id="col">${score.final}</td>
             <td id="col">${score.avg_socre}</td>
-            <td id="col"><button id="btn-check" onclick="editScore(this, ${subject_id}, ${score.student_id})">Cập nhật</button></td>
+            <td id="col"><button id="btn-check" onclick="editScore(this, ${subject_id}, ${score.student_id})">Edit</button></td>
           </tr>
         `;
       i++;
       tbody.innerHTML += row;
     });
   }).catch(error => {
-    document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách học sinh. Vui lòng thử lại sau.</p>`;
+    document.getElementById('mainContent').innerHTML = `<p>Unable to load results. Please try again later.</p>`;
   });
 }
 
 function editScore(button, subject_id, student_id) {
   const row = button.closest("tr");
+  const originalValues = [];
+
   for (let i = 2; i < 5; i++) {
     const cell = row.cells[i];
     const value = cell.textContent.trim();
+    originalValues.push(value);
     cell.innerHTML = `<input type="number" value="${value}" style="width: 60px;">`;
   }
 
   button.textContent = "Save";
   button.onclick = function () {
     saveScore(this, subject_id, student_id);
+    document.removeEventListener("keydown", escHandler);
   };
+
+  function escHandler(e) {
+    if (e.key === "Escape") {
+      for (let j = 2; j < 5; j++) {
+        row.cells[j].textContent = originalValues[j - 2];
+      }
+
+      button.textContent = "Edit";
+      button.onclick = function () {
+        editScore(this, subject_id, student_id);
+      };
+
+      document.removeEventListener("keydown", escHandler);
+    }
+  }
+
+  document.addEventListener("keydown", escHandler);
 }
 
 function saveScore(button, subject_id, student_id) {
@@ -121,14 +142,14 @@ function saveScore(button, subject_id, student_id) {
       final: final
     }
   }).then(data => {
-    alert("Cập nhật thành công!");
+    alert("Update successfully!");
 
     row.cells[2].textContent = parseFloat(attendance);
     row.cells[3].textContent = parseFloat(midterm);
     row.cells[4].textContent = parseFloat(final);
     row.cells[5].textContent = parseFloat(total);
 
-    button.textContent = "Cập nhật";
+    button.textContent = "Edit";
     button.onclick = function () {
       editScore(this, subject_id, student_id);
     };

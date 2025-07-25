@@ -16,10 +16,17 @@ const Teacher = {
         return query(sql, [accountId]).then(() => ({ success: true }));
     },
 
-    delete: (accountId) => {
-        const sql = `DELETE FROM student.teacher 
-                    WHERE account_id = ?`;
-        return query(sql, [accountId]).then(() => ({ success: true }));
+    delete: async (teacherId) => {
+        const sql1 = `DELETE FROM student.teacher_subject WHERE teacher_id = ?`;
+        const sql2 = `DELETE FROM student.teacher WHERE id = ?`;
+
+        try {
+            await query(sql1, [teacherId]);
+            await query(sql2, [teacherId]);
+            return { success: true };
+        } catch (err) {
+            throw err;
+        }
     }
 }
 

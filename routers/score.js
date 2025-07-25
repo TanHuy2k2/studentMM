@@ -15,4 +15,7 @@ scoreRouter.get('/get-student-score', scoreController.getStudentScore)
 // Route to update a student's score
 scoreRouter.patch('/update', validateScore, scoreController.update)
 
+// Route to delete score
+scoreRouter.delete('/delete', scoreController.delete)
+
 module.exports = scoreRouter;

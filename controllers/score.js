@@ -59,3 +59,19 @@ exports.update = (req, res, next) => {
             });
         });
 }
+
+exports.delete = (req, res, next) => {
+    const { studentId } = req.body;
+
+    scoreModel.delete(studentId)
+        .then((result) => {
+            return res.json(result);
+        })
+        .catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Delete score unsuccessfully!",
+                error: err.message
+            });
+        });
+}

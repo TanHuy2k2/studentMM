@@ -7,7 +7,7 @@ exports.find = (req, res, next) => {
         }).catch((err) => {
             return res.status(400).json({
                 success: false,
-                message: "Cannot find data teacher",
+                message: "Get data teacher unsuccessfully!",
                 error: err.message
             });
         })
@@ -22,23 +22,23 @@ exports.add = (req, res, next) => {
         }).catch((err) => {
             return res.status(400).json({
                 success: false,
-                message: "Cannot add teacher",
+                message: "Add teacher unsuccessfully!",
                 error: err.message
             });
         })
 }
 
-exports.delete = (req, res, next) => {
-    const { accountId } = req.body;
+exports.delete = async (req, res, next) => {
+    const { teacherId } = req.body;
 
-    teacherModel.delete(accountId)
-        .then((result) => {
-            return res.json(result)
-        }).catch((err) => {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot delete teacher",
-                error: err.message
-            });
-        })
+    try {
+        const result = await teacherModel.delete(teacherId);
+        return res.json(result);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "Delete teacher unsuccessfully!",
+            error: err.message
+        });
+    }
 }

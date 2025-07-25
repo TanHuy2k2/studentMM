@@ -10,6 +10,13 @@ const validateAdd = [
     handleValidationErrors
 ];
 
-const validateDelete = validateAdd;
+const validateDelete = [
+    body('teacherId')
+        .trim()
+        .notEmpty().withMessage('Cannot get teacher ID')
+        .isInt().withMessage('Teacher ID must be int'),
+
+    handleValidationErrors
+];
 
 module.exports = { validateAdd, validateDelete };
