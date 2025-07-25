@@ -1,13 +1,13 @@
 function showTeacher() {
     hidePagging();
     document.getElementById('mainContent').innerHTML = `
-    <button id="btn-check" style="float: right;" onclick="addteacher()">Thêm giáo viên</button>
+    <button id="btn-check" style="float: right;" onclick="addteacher()">Add teacher</button>
     <table border="1">
       <thead>
         <tr>
           <th style="width: 2%;" id="col">#</th>
-          <th style="width: 10%;" id="col">Hình ảnh</th>
-          <th style="width: 15%;">Tên</th>
+          <th style="width: 10%;" id="col">Image</th>
+          <th style="width: 15%;">Name</th>
           <th style="width: 20%;">Email</th>
           <th style="width: 13%;" id="col"></th>
         </tr>
@@ -30,21 +30,21 @@ function showTeacher() {
             <td>${res.teacher_name}</td>
             <td>${res.email}</td>
             <td id="col">
-              <button id="btn-check" onclick='updateTeacher(${JSON.stringify(res)})'>Cập nhật</button>
-              <button id="btn-check" onclick="deleteTeacher(${res.account_id})">Xoá</button>
+              <button id="btn-check" onclick='updateTeacher(${JSON.stringify(res)})'>Update</button>
+              <button id="btn-check" onclick="deleteTeacher(${res.account_id}, ${res.teacher_id})">Delete</button>
             </td>
           </tr>`;
             i++;
             tbody.innerHTML += row;
         });
     }).catch(error => {
-        document.getElementById('mainContent').innerHTML = `<p>Không thể tải danh sách giáo viên. Vui lòng thử lại sau.</p>`;
+        document.getElementById('mainContent').innerHTML = `<p>Failed to load Subject list. Please try again later.</p>`;
     });
 }
 
 function addteacher() {
     document.getElementById('mainContent').innerHTML = `
-    <h1>Thêm giáo viên</h1>
+    <h1>Add teacher</h1>
     <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center; 
             align-items: center;">
         <button id="col" onclick="showForm()">Form</button>
@@ -53,30 +53,30 @@ function addteacher() {
 
     <div id="formContainer">
         <div class="form-group">
-        <label>Tên giáo viên:</label>
-        <input type="text" id="teacherName" placeholder="Nhập tên giáo viên" required>
+        <label>Teacher name:</label>
+        <input type="text" id="teacherName" placeholder="Enter teacher name" required>
         </div>
         <div class="form-group">
         <label>Email:</label>
-        <input type="email" id="teacherEmail" placeholder="Nhập email" required>
+        <input type="email" id="teacherEmail" placeholder="Enter email" required>
         </div>
         <div class="form-group">
         <label>Password:</label>
-        <input type="password" id="teacherPassword" placeholder="Nhập password" required>
+        <input type="password" id="teacherPassword" placeholder="Enter password" required>
         </div>
         <div class="form-group">
-        <label>Hình ảnh:</label>
+        <label>Image:</label>
         <input type="file" id="teacherImage" name="image" accept="image/*">
         </div>
-        <button class="submit-btn" onclick="saveTeacher()">Thêm</button>
+        <button class="submit-btn" onclick="saveTeacher()">Add</button>
     </div>
 
     <div id="csvContainer" style="display: none;">
         <div class="form-group">
-        <label>Thêm từ file CSV:</label>
+        <label>Add file csv:</label>
         <input type="file" id="csvFile" accept=".csv">
         </div>
-        <button class="submit-btn" onclick="importCSV()">Nhập CSV</button>
+        <button class="submit-btn" onclick="importCSV()">Add CSV</button>
     </div>`;
 }
 
@@ -103,7 +103,7 @@ async function saveTeacher() {
     formData.append('image', imageFile);
 
     if (!name || !email || !password || !imageFile) {
-        alert('Vui lòng điền đầy đủ thông tin.');
+        alert('Please fill all information.');
         return;
     }
 
@@ -115,6 +115,7 @@ async function saveTeacher() {
             processData: false,
             contentType: false
         });
+
         if (!response_register.success) {
             return alert(response_register.message);
         }
@@ -125,10 +126,10 @@ async function saveTeacher() {
             data: { accountId: response_register.id },
         });
         if (!response_add.success) {
-            throw new Error('Failed to add teacher');
+            return alert("Add teacher unsuccessfully!");
         }
 
-        alert('Thêm giáo viên thành công!');
+        alert('Add teacher successfully!');
         showTeacher();
     } catch (error) {
         alert(error['responseJSON']['error'].msg);
@@ -167,7 +168,7 @@ async function saveUpdateTeacher(acc_id) {
     formData.append('image', imageFile);
 
     if (!name || !email || !imageFile) {
-        alert('Vui lòng điền đầy đủ thông tin.');
+        alert('Please fill all information.');
         return;
     }
 
@@ -180,18 +181,18 @@ async function saveUpdateTeacher(acc_id) {
             contentType: false
         });
         if (!response_update_acc.success) {
-            return alert("Không thành công");
+            return alert("Update unsuccessfully.");
         }
 
-        alert('Cập nhật thông tin thành công!');
+        alert('Update teacher successfully!');
         showTeacher();
     } catch (error) {
         alert(error['responseJSON']['error'].msg);
     }
 }
 
-async function deleteTeacher(account_id) {
-    if (!confirm("Bạn có chắc chắn muốn xoá giáo viên này?")) {
+async function deleteTeacher(account_id, teacher_id) {
+    if (!confirm("Are you sure you want to delete this teacher?")) {
         return;
     }
 
@@ -199,10 +200,10 @@ async function deleteTeacher(account_id) {
         const response_delete_teacher = await $.ajax({
             url: '/teacher/delete',
             type: 'DELETE',
-            data: { accountId: account_id },
+            data: { teacherId: teacher_id },
         });
         if (!response_delete_teacher.success) {
-            return alert("Không thành công")
+            return alert("Delete unsuccessfully")
         }
 
         const response_delete_acc = await $.ajax({
@@ -211,10 +212,10 @@ async function deleteTeacher(account_id) {
             data: { accountId: account_id }
         });
         if (!response_delete_acc.success) {
-            return alert("Không thành công");
+            return alert("Delete unsuccessfully");
         }
 
-        alert('Xoá giáo viên thành công!');
+        alert('Delete teacher successfully!');
         showTeacher();
     } catch (error) {
         alert(error['responseJSON']['error'].msg);
@@ -246,7 +247,6 @@ async function importCSV() {
         }
 
         for (const item of response_register['result']) {
-            console.log(response_register);
             const response_add = await $.ajax({
                 url: '/teacher/add',
                 type: 'POST',
@@ -257,7 +257,7 @@ async function importCSV() {
             }
         }
 
-        alert('Thêm giáo viên thành công!');
+        alert('Add teacher successfully!');
         showTeacher();
     } catch (error) {
         alert(error['responseJSON']['error'].msg);
