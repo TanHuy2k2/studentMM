@@ -2,7 +2,7 @@ let currentPage;
 
 const getClassFilter = () => {
   $.ajax({
-    url: '/class/get-class-for-register',
+    url: '/class/find',
     type: 'GET',
   }).then(response => {
     const classSelect = document.getElementById('classFilter');
@@ -20,16 +20,16 @@ const getClassFilter = () => {
 
 getClassFilter();
 
-const filterChange = (check) => {
-  showStudent(1, check);
-  updatePagination(check);
+const filterChange = () => {
+  showStudent(1);
+  updatePagination();
 }
 
 const restoreFilter = () => {
   document.getElementById('classFilter').value = '';
   document.getElementById('min_gpa').value = '';
   document.getElementById('max_gpa').value = '';
-  filterChange(0);
+  filterChange();
 }
 
 function hidePagging() {
@@ -37,7 +37,7 @@ function hidePagging() {
   document.getElementById('search').style.display = 'none';
 }
 
-function showStudent(page = 1, filter = 0) {
+function showStudent(page = 1) {
   document.getElementById('search').style.display = 'flex';
   const classID = document.getElementById('classFilter').value;
   const minGpa = document.getElementById('min_gpa').value;
@@ -68,8 +68,7 @@ function showStudent(page = 1, filter = 0) {
       page: page,
       classId: classID,
       minGpa: minGpa,
-      maxGpa: maxGpa,
-      filter: filter
+      maxGpa: maxGpa
     }
   }).then(response => {
     const tbody = document.getElementById('scoreBody');
@@ -206,7 +205,7 @@ async function saveStudent() {
     }
 
     alert('Add student successfully!');
-    filterChange(0);
+    filterChange();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }
@@ -296,7 +295,7 @@ async function saveUpdateStudent(acc_id, student_id) {
     }
 
     alert('Update successful!');
-    filterChange(0);
+    filterChange();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }
@@ -342,13 +341,13 @@ async function deleteStudent(account_id, student_id) {
   }
 }
 
-function updatePagination(filter = 0) {
+function updatePagination() {
   const classID = document.getElementById('classFilter').value;
   const minGpa = document.getElementById('min_gpa').value;
   const maxGpa = document.getElementById('max_gpa').value;
 
   $('#pagging').pagination({
-    dataSource: `/student/find?page=1&classId=${classID}&minGpa=${minGpa}&maxGpa=${maxGpa}&filter=${filter}`,
+    dataSource: `/student/find?page=1&classId=${classID}&minGpa=${minGpa}&maxGpa=${maxGpa}`,
     locator: 'result',
     totalNumberLocator: function (response) {
       return response.total;
@@ -357,17 +356,17 @@ function updatePagination(filter = 0) {
     afterPageOnClick: function (event, pageNumber) {
       currentPage = pageNumber;
 
-      showStudent(pageNumber, filter);
+      showStudent(pageNumber);
     },
     afterPreviousOnClick: function (event, pageNumber) {
       currentPage = pageNumber;
 
-      showStudent(pageNumber, filter);
+      showStudent(pageNumber);
     },
     afterNextOnClick: function (event, pageNumber) {
       currentPage = pageNumber;
 
-      showStudent(pageNumber, filter);
+      showStudent(pageNumber);
     },
   });
 }
@@ -400,7 +399,11 @@ async function importCsvStudent() {
       const response_add = await $.ajax({
         url: '/student/add',
         type: 'POST',
-        data: { accountId: item.id, classId: item.classId },
+        contentType: 'application/json',
+        data: JSON.stringify({
+          accountId: item.id,
+          classId: item.classId
+        }),
       });
       if (!response_add.success) {
         return alert(response_add.message);
@@ -408,7 +411,7 @@ async function importCsvStudent() {
     }
 
     alert('Insert student successfull!');
-    filterChange(0);
+    filterChange();
   } catch (error) {
     alert(error['responseJSON']['error'].msg);
   }

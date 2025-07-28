@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const { SALT_ROUNDS, DEFAULT_PASSWORD, DEFAULT_CLASS } = require('../contants/contant');
+const { SALT_ROUNDS, DEFAULT_PASSWORD } = require('../contants/contant');
 const { first } = require('../utils/array');
 const { downloadImage } = require('../utils/dowloadImage');
 const csv = require('csv-parser');
@@ -64,7 +64,7 @@ exports.insertCsv = (req, res, next) => {
                         checkList: true
                     });
                     if (register.success) {
-                        register.classId = DEFAULT_CLASS;
+                        register.classId = row.classId ?? null;
                         registers.push(register);
                     }
                 }

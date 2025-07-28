@@ -1,9 +1,25 @@
 const query = require('./db');
 
 const Student = {
-    totalStudents: () => {
-        const sql = ` SELECT * FROM student.students`;
-        return query(sql).then((result) => result.length);
+    totalStudents: (minGpa, maxGpa, classId) => {
+        const sql = `SELECT COUNT(*) AS total 
+                    FROM (
+                        SELECT a.id AS acc_id,
+                        COALESCE(ROUND(AVG((s.attendance + s.midterm + s.final) / 3), 2), 0) AS gpa,
+                        c.id AS class_id
+                        FROM student.accounts a
+                        INNER JOIN student.students st 
+                        ON a.id = st.account_id
+                        LEFT JOIN student.class c 
+                        ON st.class_id = c.id
+                        LEFT JOIN student.score s 
+                        ON st.id = s.student_id
+                        GROUP BY a.id, st.id, c.id
+                        HAVING (? IS NULL OR gpa >= ?)
+                                AND (? IS NULL OR gpa <= ?)
+                                AND (? IS NULL OR class_id = ?)
+                    ) AS filtered_students`;
+        return query(sql, [minGpa, minGpa, maxGpa, maxGpa, classId, classId]).then((result) => result[0].total);
     },
 
     find: (page, pageSize, minGpa, maxGpa, classId) => {
@@ -15,7 +31,7 @@ const Student = {
             FROM student.accounts a
             INNER JOIN student.students st 
             ON a.id = st.account_id
-            INNER JOIN student.class c 
+            LEFT JOIN student.class c 
             ON st.class_id = c.id
             LEFT JOIN student.score s 
             ON st.id = s.student_id
@@ -28,10 +44,11 @@ const Student = {
     },
 
     add: (accountId, classId) => {
+        const checkClassId = classId ?? null
         const sql = `
             INSERT INTO student.students (account_id, class_id)
             VALUES (?, ?);`;
-        return query(sql, [accountId, classId]).then(() => ({ success: true }));
+        return query(sql, [accountId, checkClassId]).then(() => ({ success: true }));
     },
 
     update: (studentId, classId) => {

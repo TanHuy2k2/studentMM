@@ -7,11 +7,6 @@ const validateAdd = [
         .notEmpty().withMessage('Cannot get account ID')
         .bail()
         .isInt().withMessage('Account ID must be int'),
-    body('classId')
-        .trim()
-        .notEmpty().withMessage('Cannot get class ID')
-        .bail()
-        .isInt().withMessage('Class ID must be int'),
 
     handleValidationErrors
 ]

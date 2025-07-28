@@ -27,7 +27,7 @@ exports.getClassForRegister = (req, res, next) => {
 }
 
 exports.add = async (req, res, next) => {
-    const { className } = req.body;
+    const { className, maxStudent } = req.body;
 
     try {
         const checkResult = await classModel.checkClass(className);
@@ -35,7 +35,7 @@ exports.add = async (req, res, next) => {
             return res.json({ success: false });
         }
 
-        const result = await classModel.add(className);
+        const result = await classModel.add(className, maxStudent);
         return res.json(result);
     } catch (err) {
         return res.status(400).json({
@@ -47,15 +47,15 @@ exports.add = async (req, res, next) => {
 }
 
 exports.update = async (req, res, next) => {
-    const { classId, className } = req.body;
+    const { classId, className, maxStudent, duplicateClassName } = req.body;
 
     try {
         const checkResult = await classModel.checkClass(className);
-        if (checkResult.exists) {
+        if (checkResult.exists && duplicateClassName) {
             return res.json({ success: false, message: "Class already exists." });
         }
 
-        const result = await classModel.update(classId, className)
+        const result = await classModel.update(classId, className, maxStudent);
         return res.json(result);
     } catch (err) {
         return res.status(400).json({
@@ -66,34 +66,22 @@ exports.update = async (req, res, next) => {
     }
 }
 
-exports.softDelete = (req, res, next) => {
+exports.delete = async (req, res, next) => {
     const { classId } = req.body;
 
-    classModel.softDelete(classId)
-        .then((result) => {
-            return res.json(result);
-        })
-        .catch((err) => {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot soft delete class.",
-                error: err.message
-            });
-        });
-}
+    try {
+        const numberStudent = await classModel.checkStudentInClass(classId);
+        if (numberStudent) {
+            return res.json({ success: false, message: "Cannot delete this class. Because have students in this class!" })
+        }
 
-exports.delete = (req, res, next) => {
-    const { classId } = req.body;
-
-    classModel.delete(classId)
-        .then((result) => {
-            return res.json(result);
-        })
-        .catch((err) => {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot delete class.",
-                error: err.message
-            });
+        const result = await classModel.delete(classId);
+        return res.json(result);
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "Cannot delete class.",
+            error: err.message
         });
+    }
 }
