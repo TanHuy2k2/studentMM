@@ -7,7 +7,9 @@ function showClass() {
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 60%;">Class</th>
+          <th style="width: 20%;">Class</th>
+          <th style="width: 20%;">Number students</th>
+          <th style="width: 20%;">Max students</th>
           <th style="width: 30%;"></th>
         </tr>
       </thead>
@@ -26,10 +28,11 @@ function showClass() {
           <tr>
             <td id="col">${i}</td>
             <td>${res.name}</td>
+            <td>${res.number_student}</td>
+            <td>${res.max_students}</td>
             <td id="col">
                 <button id="btn-check" onclick="updateClass(this, ${res.id})">Edit</button>
-                <button id="btn-check" onclick="deleteSoftClass(${res.id})">Soft delete</button>
-                <button id="btn-check" onclick="deleteHardClass(${res.id})">Delete</button>
+                <button id="btn-check" onclick="deleteClass(${res.id})">Delete</button>
             </td>
           </tr>`;
             i++;
@@ -47,11 +50,16 @@ function addCLass() {
       <label>Class name:</label>
       <input type="text" id="className" placeholder="Input class name" required>
     </div>
+    <div class="form-group">
+      <label>Max students:</label>
+      <input type="number" id="maxStudent" placeholder="Input max students" required>
+    </div>
     <button class="submit-btn" onclick="saveClass()">Add</button>`;
 }
 
 function saveClass() {
     const className = $('#className').val();
+    const maxStudent = $('#maxStudent').val()
     if (!className) {
         alert("Please enter Class name.");
         return;
@@ -62,6 +70,7 @@ function saveClass() {
         type: 'POST',
         data: {
             className: className,
+            maxStudent: maxStudent,
         }
     }).then(response => {
         if (response.success) {
@@ -77,32 +86,46 @@ function saveClass() {
 
 function updateClass(button, class_id) {
     const row = button.closest("tr");
-    const cell = row.cells[1];
-    const value = cell.textContent.trim();
-    cell.innerHTML = `<input type="text" value="${value}" style="width: 100px;" required>`;
+    const cell1 = row.cells[1];
+    const className = cell1.textContent.trim();
+    cell1.innerHTML = `<input type="text" value="${className}" style="width: 100px;" required>`;
 
+    const cell3 = row.cells[3];
+    const maxStudents = cell3.textContent.trim();
+    cell3.innerHTML = `<input type="number" value="${maxStudents}" style="width: 100px;" required>`;
     button.textContent = "Save";
     button.onclick = function () {
-        saveClassEdit(this, class_id);
+        saveClassEdit(this, class_id, className);
     };
 }
 
-function saveClassEdit(button, class_id) {
+function saveClassEdit(button, class_id, className) {
     const row = button.closest("tr");
-    const cell = row.cells[1];
-    const newValue = cell.querySelector("input").value;
-    if (!newValue) {
-        alert("Please input Class name.");
+    const cell1 = row.cells[1];
+    const editClassName = cell1.querySelector("input").value;
+    const cell3 = row.cells[3];
+    const maxStudents = cell3.querySelector("input").value;
+    let duplicateClassName = true;
+
+    if (!editClassName || !maxStudents) {
+        alert("Please input Class name or max students.");
         return;
+    }
+
+    if (editClassName === className) {
+        duplicateClassName = false;
     }
 
     $.ajax({
         url: '/class/update',
         type: 'PATCH',
-        data: {
+        contentType: 'application/json',
+        data: JSON.stringify({
             classId: class_id,
-            className: newValue,
-        }
+            className: editClassName,
+            maxStudent: maxStudents,
+            duplicateClassName: duplicateClassName
+        })
     }).then(response => {
         if (response.success) {
             alert("Update class successfully!");
@@ -120,26 +143,7 @@ function saveClassEdit(button, class_id) {
     });
 }
 
-function deleteSoftClass(class_id) {
-    $.ajax({
-        url: '/class/soft-delete',
-        type: 'PATCH',
-        data: {
-            classId: class_id,
-        }
-    }).then(response => {
-        if (response.success) {
-            alert("Soft delete class successfully!");
-            showClass();
-        } else {
-            alert("Soft delete class unsucessfully!");
-        }
-    }).catch(error => {
-        alert("An error occurred while delete soft class.");
-    });
-}
-
-function deleteHardClass(class_id) {
+function deleteClass(class_id) {
     if (!confirm("Are you sure you want to delete this Class?")) {
         return;
     }
@@ -155,7 +159,7 @@ function deleteHardClass(class_id) {
             alert("Delete class successfuly");
             showClass();
         } else {
-            alert("Delete class unsuccessfuly!");
+            alert(response.message);
         }
     }).catch(error => {
         alert("An error occurred while delete class.");

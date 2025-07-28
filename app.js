@@ -16,6 +16,7 @@ const PORT = process.env.PORT
 app.set('view engine', 'ejs');
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());

@@ -15,9 +15,6 @@ classRouter.post('/add', validateClassName, classController.add)
 // Route to update class information
 classRouter.patch('/update', validateClassName, classController.update)
 
-// Route to perform soft delete on a class
-classRouter.patch('/soft-delete', validateDelete, classController.softDelete)
-
 // Route to permanently delete a class from the database
 classRouter.delete('/delete', validateDelete, classController.delete)
 

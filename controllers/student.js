@@ -1,22 +1,16 @@
 const studentModel = require('../models/student');
-const { PAGE_SIZE, FILTER_TRUE } = require('../contants/contant');
+const { PAGE_SIZE } = require('../contants/contant');
 const ExcelJS = require('exceljs');
 
 exports.find = async (req, res, next) => {
-    let { page, minGpa, maxGpa, classId, filter } = req.query;
+    let { page, minGpa, maxGpa, classId } = req.query;
     minGpa = minGpa ? parseFloat(minGpa) : null;
     maxGpa = maxGpa ? parseFloat(maxGpa) : null;
     classId = classId ? parseInt(classId) : null;
 
     try {
-        const totalStudents = await studentModel.totalStudents();
+        const totalStudents = await studentModel.totalStudents(minGpa, maxGpa, classId);
         const listStudents = await studentModel.find(page, PAGE_SIZE, minGpa, maxGpa, classId);
-        if (parseFloat(filter) === FILTER_TRUE) {
-            return res.json({
-                total: listStudents.length,
-                result: listStudents
-            })
-        }
         return res.json({
             total: totalStudents,
             result: listStudents

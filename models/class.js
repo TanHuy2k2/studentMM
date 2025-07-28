@@ -2,23 +2,39 @@ const query = require('./db');
 
 const Class = {
     find: () => {
-        const sql = `SELECT * FROM student.class where isDelete = false`;
+        const sql = `SELECT cl.id, cl.name, cl.max_students, count(st.id) AS number_student 
+                    FROM student.class AS cl
+                    LEFT JOIN student.students AS st
+                    ON cl.id = st.class_id
+                    GROUP BY cl.id`;
         return query(sql);
+    },
+
+    checkStudentInClass: (classId) => {
+        const sql = `SELECT COUNT(st.id) AS number_student
+                    FROM student.students AS st
+                    WHERE st.class_id = ?`
+        return query(sql, [classId]).then((result) => result[0]?.number_student || 0)
     },
 
     getClassForRegister: () => {
-        const sql = `SELECT * FROM student.class WHERE isDelete = false`;
+        const sql = `SELECT c.id, c.name, c.max_students, c.created_at,
+                    COUNT(s.id) AS current_students
+                    FROM student.class c
+                    LEFT JOIN student.students s ON c.id = s.class_id
+                    GROUP BY c.id, c.name, c.max_students, c.created_at
+                    HAVING current_students < c.max_students;`;
         return query(sql);
     },
 
-    add: (className) => {
-        const sql = `INSERT INTO student.class (name, isDelete) VALUES (?, false)`;
-        return query(sql, [className]).then(() => ({ success: true }));
+    add: (className, maxStudent) => {
+        const sql = `INSERT INTO student.class (name, max_students) VALUES (?, ?)`;
+        return query(sql, [className, maxStudent]).then(() => ({ success: true }));
     },
 
-    update: (classId, className) => {
-        const sql = `UPDATE student.class SET name = ? WHERE id = ?`;
-        return query(sql, [className, classId]).then(() => ({ success: true }));
+    update: (classId, className, maxStudent) => {
+        const sql = `UPDATE student.class SET name = ?, max_students = ? WHERE id = ?`;
+        return query(sql, [className, maxStudent, classId]).then(() => ({ success: true }));
     },
 
     checkClass: (className) => {
@@ -30,11 +46,6 @@ const Class = {
                 return { exists: false };
             }
         });
-    },
-
-    softDelete: (classId) => {
-        const sql = `UPDATE student.class SET isDelete = true WHERE id = ?`;
-        return query(sql, [classId]).then(() => ({ success: true }));
     },
 
     delete: (classId) => {
