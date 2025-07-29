@@ -1,5 +1,5 @@
 const studentModel = require('../models/student');
-const { PAGE_SIZE } = require('../contants/contant');
+const { PAGE_SIZE, CONTENT_TYPE, CONTENT_DISPOSITION } = require('../contants/contant');
 const ExcelJS = require('exceljs');
 
 exports.find = async (req, res, next) => {
@@ -69,7 +69,12 @@ exports.delete = (req, res, next) => {
         });
 }
 
-exports.exportExcel = (req, res, next) => {
+exports.exportExcel = async (req, res, next) => {
+    let { page, minGpa, maxGpa, classId } = req.query;
+    minGpa = minGpa ? parseFloat(minGpa) : null;
+    maxGpa = maxGpa ? parseFloat(maxGpa) : null;
+    classId = classId ? parseInt(classId) : null;
+
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data students');
     worksheet.columns = [
@@ -80,21 +85,21 @@ exports.exportExcel = (req, res, next) => {
         { header: 'GPA', key: 'gpa', width: 10 },
     ];
 
-    studentModel.getDataForExport()
-        .then(async (result) => {
-            result.forEach(item => {
-                worksheet.addRow(item);
-            });
-
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', 'attachment; filename="data.xlsx"');
-
-            await workbook.xlsx.write(res);
-        }).catch((err) => {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot export student.",
-                error: err.message
-            });
+    try {
+        const result = await studentModel.find(page, PAGE_SIZE, minGpa, maxGpa, classId);
+        result.forEach(item => {
+            worksheet.addRow(item);
         });
+
+        res.setHeader('Content-Type', CONTENT_TYPE);
+        res.setHeader('Content-Disposition', CONTENT_DISPOSITION);
+
+        await workbook.xlsx.write(res);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Cannot export student.",
+            error: err.message
+        });
+    }
 }

@@ -63,22 +63,6 @@ const Student = {
         DELETE FROM student.students where account_id = ?`;
         return query(sql, [accountId]).then(() => ({ success: true }));
     },
-
-    getDataForExport: () => {
-        const sql = `
-            SELECT a.id AS acc_id, st.id AS student_id, a.name, a.image, a.email, c.name AS class_name,
-            c.id AS class_id,
-            COALESCE(ROUND(AVG((s.attendance + s.midterm + s.final) / 3), 2), 0) AS gpa
-            FROM student.accounts a
-            INNER JOIN student.students st 
-            ON a.id = st.account_id
-            INNER JOIN student.class c 
-            ON st.class_id = c.id
-            LEFT JOIN student.score s 
-            ON st.id = s.student_id
-            GROUP BY a.id, st.id, a.name, a.image, a.email, c.name`;
-        return query(sql);
-    }
 }
 
 module.exports = Student;
