@@ -1,4 +1,4 @@
-let currentPage;
+let currentPage = 1;
 
 const getClassFilter = () => {
   $.ajax({
@@ -418,5 +418,9 @@ async function importCsvStudent() {
 }
 
 function exportExcel() {
-  window.location.href = '/student/export';
+  const classID = document.getElementById('classFilter').value;
+  const minGpa = document.getElementById('min_gpa').value;
+  const maxGpa = document.getElementById('max_gpa').value;
+
+  window.location.href = `/student/export?page=${currentPage}&classId=${classID}&minGpa=${minGpa}&maxGpa=${maxGpa}`;
 }
