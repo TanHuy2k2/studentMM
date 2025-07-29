@@ -9,6 +9,7 @@ const scoreRouter = require('./routers/score');
 const classRouter = require('./routers/class');
 const subjectRouter = require('./routers/subject');
 const teacherRouter = require('./routers/teacher');
+const roomRouter = require('./routers/room')
 const { checkLogin } = require('./middlewave/auth');
 const studentRouter = require('./routers/student');
 const PORT = process.env.PORT
@@ -26,6 +27,7 @@ app.use('/class', classRouter);
 app.use('/student', studentRouter);
 app.use('/subject', subjectRouter);
 app.use('/teacher', teacherRouter);
+app.use('/room', roomRouter);
 
 app.get('/', checkLogin, (req, res, next) => {
     res.render('home', { 'data': req.data });

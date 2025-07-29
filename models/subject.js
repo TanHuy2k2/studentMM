@@ -2,14 +2,18 @@ const query = require('./db');
 
 const Subject = {
     find: () => {
-        const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, acc.name AS teacher_name
+        const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, 
+                    acc.name AS teacher_name, room.name AS roomName, ts.start_time AS startTime, 
+                    ts.end_time AS endTime
                     FROM student.subject AS sj
                     INNER JOIN student.teacher_subject AS ts
                     ON sj.id = ts.subject_id
                     INNER JOIN student.teacher AS tc
                     ON ts.teacher_id = tc.id
-                    INNER JOIN student.accounts as acc
-                    ON tc.account_id = acc.id`;
+                    INNER JOIN student.accounts AS acc
+                    ON tc.account_id = acc.id
+                    LEFT JOIN student.room AS room
+                    ON ts.room_id = room.id`;
         return query(sql);
     },
 
@@ -47,10 +51,10 @@ const Subject = {
         return query(sql, [subjectName]).then((result) => ({ success: true, subject_id: result.insertId }));
     },
 
-    addTeacherSubject: (subjectId, teacherId) => {
-        const sql = `INSERT INTO student.teacher_subject(teacher_id, subject_id)
-                    VALUES (?,?)`;
-        return query(sql, [teacherId, subjectId]).then(() => ({ success: true }));
+    addTeacherSubject: (subjectId, teacherId, roomId, startTime, endTime) => {
+        const sql = `INSERT INTO student.teacher_subject(teacher_id, subject_id, room_id, start_time, end_time)
+                    VALUES (?,?,?,?,?)`;
+        return query(sql, [teacherId, subjectId, roomId, startTime, endTime]).then(() => ({ success: true }));
     },
 
     update: (subjectId, subjectName) => {
@@ -75,6 +79,14 @@ const Subject = {
         const sql = `DELETE FROM student.teacher_subject
                     WHERE subject_id = ?`;
         return query(sql, [subjectId]).then(() => ({ success: true }));
+    },
+
+    checkRoom: (roomId, startTime, endTime) => {
+        const sql = `SELECT * 
+                    FROM student.teacher_subject
+                    WHERE room_id = ? AND start_time < ? AND end_time > ?
+                    LIMIT 1`;
+        return query(sql, [roomId, endTime, startTime]);
     }
 }
 

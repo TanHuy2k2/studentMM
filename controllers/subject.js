@@ -1,4 +1,5 @@
 const subjectModel = require('../models/subject');
+const { formatDateTime } = require('../utils/formatTime');
 
 exports.find = (req, res, next) => {
     subjectModel.find()
@@ -58,19 +59,26 @@ exports.add = (req, res, next) => {
         });
 }
 
-exports.addTeacherSubject = (req, res, next) => {
-    const { subjectId, teacherId } = req.body;
+exports.addTeacherSubject = async (req, res, next) => {
+    const { subjectId, teacherId, roomId, startTime, endTime } = req.body;
+    const formatStartTime = formatDateTime(startTime);
+    const formatEndTime = formatDateTime(endTime)
 
-    subjectModel.addTeacherSubject(subjectId, teacherId)
-        .then((result) => {
-            return res.json(result);
-        }).catch((err) => {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot add to table TeacherSubject",
-                error: err.message
-            });
-        })
+    try {
+        const check = await subjectModel.checkRoom(roomId, formatStartTime, formatEndTime);
+        if (check.length) {
+            return res.json({ success: false, message: "This room is already booked." });
+        }
+
+        const result = await subjectModel.addTeacherSubject(subjectId, teacherId, roomId, formatStartTime, formatEndTime);
+        return res.json(result);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Cannot add to table TeacherSubject",
+            error: err.message
+        });
+    }
 }
 
 exports.update = (req, res, next) => {

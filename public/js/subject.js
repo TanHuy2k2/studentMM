@@ -1,3 +1,34 @@
+function formatTime(time) {
+  if (!time) return "null";
+  const date = new Date(time);
+
+  const options = {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+
+  const localTime = date.toLocaleString('vi-VN', options);
+  return localTime;
+}
+
+function formatDateTime(time) {
+  if (!time) return "null";
+  const date = new Date(time);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 function showSubjectTeacher() {
   hidePagging();
   document.getElementById('mainContent').innerHTML = `
@@ -6,7 +37,7 @@ function showSubjectTeacher() {
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 80%;">Subject</th>
+          <th style="width: 20%;">Subject</th>
           <th style="width: 10%;"></th>
         </tr>
       </thead>
@@ -49,9 +80,9 @@ function showSubject() {
       <thead>
         <tr>
           <th style="width: 10%;" id="col">#</th>
-          <th style="width: 40%;">Subject</th>
+          <th style="width: 30%;">Subject</th>
           <th style="width: 30%;">Teacher</th>
-          <th style="width: 20%;"></th>
+          <th style="width: 30%;"></th>
         </tr>
       </thead>
       <tbody id="scoreBody">
@@ -72,6 +103,7 @@ function showSubject() {
             <td>${subject.subject_name}</td>
             <td>${subject.teacher_name}</td>
             <td id="col">
+              <button id="btn-check" onclick='showDetail(${JSON.stringify(subject)})'>Detail</button>
               <button id="btn-check" onclick='update(${JSON.stringify(subject)})'>Update</button>
               <button id="btn-check" onclick="deleteSubject(${subject.subject_id})">Delete</button>
             </td>
@@ -86,6 +118,46 @@ function showSubject() {
     });
 }
 
+function showDetail(subject) {
+  document.getElementById('mainContent').innerHTML = `
+    <h1>Detail</h1>
+    <div class="form-group">
+      <label><b>Subject:</b> ${subject.subject_name}</label>
+      
+    </div>
+    <div class="form-group">
+      <label><b>Teacher:</b> ${subject.teacher_name}</label>
+    </div>
+    <div class="form-group">
+      <label><b>Room:</b> ${subject.roomName}</label>
+    </div>
+    <div class="form-group">
+      <label><b>Start time:</b> ${formatTime(subject.startTime)}</label>
+    </div>
+    <div class="form-group">
+      <label><b>End time:</b> ${formatTime(subject.endTime)}</label>
+    </div>
+    
+    <button class="submit-btn" onclick="showSubject()">Back</button>`;
+}
+
+function populateSelect(url, selectId, valueKey, textKey, errorMessage) {
+  $.ajax({
+    url: url,
+    type: 'GET',
+  }).then(response => {
+    const select = document.getElementById(selectId);
+    response.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item[valueKey];
+      option.textContent = item[textKey];
+      select.appendChild(option);
+    });
+  }).catch(() => {
+    alert(errorMessage);
+  });
+}
+
 function addSubject() {
   document.getElementById('mainContent').innerHTML = `
     <h1>Add Subject</h1>
@@ -98,30 +170,34 @@ function addSubject() {
       <select id="teacherSelect">
       </select>
     </div>
+    <div class="form-group">
+      <label>Room:</label>
+      <select id="roomSelect">
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Start time:</label>
+      <input type="datetime-local" id="startTime" placeholder="Enter start time" required>
+    </div>
+    <div class="form-group">
+      <label>End time:</label>
+      <input type="datetime-local" id="endTime" placeholder="Enter end time" required>
+    </div>
     <button class="submit-btn" onclick="saveSubject()">Add</button>`;
 
-  $.ajax({
-    url: '/teacher/find',
-    type: 'GET',
-  }).then(response => {
-    const teacherSelect = document.getElementById('teacherSelect');
-    response.forEach(res => {
-      const option = document.createElement('option');
-      option.value = res.teacher_id;
-      option.textContent = res.teacher_name;
-      teacherSelect.appendChild(option);
-    });
-  }).catch(error => {
-    alert('Failed to load Subject list. Please try again later.');
-  });
+  populateSelect('/teacher/find', 'teacherSelect', 'teacher_id', 'teacher_name', 'Failed to load Teacher list. Please try again later.');
+  populateSelect('/room/find', 'roomSelect', 'id', 'name', 'Failed to load Room list. Please try again later.');
 }
 
 async function saveSubject() {
   const subjectName = $('#subjectName').val();
   const teacherId = $('#teacherSelect').val();
+  const roomId = $('#roomSelect').val();
+  const startTime = $('#startTime').val();
+  const endTime = $('#endTime').val();
 
-  if (!subjectName || !teacherId) {
-    alert("Please fill in information.");
+  if (!subjectName || !teacherId || !roomId || !startTime || !endTime) {
+    alert("Please fill all information.");
     return;
   }
 
@@ -138,10 +214,18 @@ async function saveSubject() {
     const response_add_subject_teacher = await $.ajax({
       url: '/subject/add-teacher-subject',
       type: 'POST',
-      data: { subjectId: response_add_subject.subject_id, teacherId: parseInt(teacherId) }
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify({
+        subjectId: response_add_subject.subject_id,
+        teacherId: parseInt(teacherId),
+        roomId: parseInt(roomId),
+        startTime: startTime,
+        endTime: endTime
+      })
     });
+
     if (!response_add_subject_teacher.success) {
-      return alert("Add unsuccessful");
+      return alert(response_add_subject_teacher.message);
     }
 
     alert('Add Subject successfully!');
@@ -162,8 +246,21 @@ function update(subject) {
       <label>Teacher:</label>
       <select id="teacherSelect">
       </select>
+    </div>   
+    <div class="form-group">
+      <label>Room:</label>
+      <select id="roomSelect">
+      </select>
     </div>
-    
+    <div class="form-group">
+      <label>Start time:</label>
+      <input type="datetime-local" id="startTime" placeholder="Enter start time" value="${formatDateTime(subject.startTime)}" required>
+    </div>
+    <div class="form-group">
+      <label>End time:</label>
+      <input type="datetime-local" id="endTime" placeholder="Enter end time" value="${formatDateTime(subject.endTime)}" required>
+    </div>
+
     <button class="submit-btn" onclick="saveUpdate(${subject.subject_id}, ${subject.teacher_id})">Update</button>`;
 
   $.ajax({
@@ -181,6 +278,26 @@ function update(subject) {
       }
 
       teacherSelect.appendChild(option);
+    });
+  }).catch(error => {
+    alert('Failed to load Subject list. Please try again later.');
+  });
+
+  $.ajax({
+    url: '/room/find',
+    type: 'GET',
+  }).then(response => {
+    const roomSelect = document.getElementById('roomSelect');
+    response.forEach(res => {
+      const option = document.createElement('option');
+      option.value = res.id;
+      option.textContent = res.name;
+
+      if (res.name === subject.roomName) {
+        option.selected = true;
+      }
+
+      roomSelect.appendChild(option);
     });
   }).catch(error => {
     alert('Failed to load Subject list. Please try again later.');
