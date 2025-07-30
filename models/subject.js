@@ -4,13 +4,13 @@ const Subject = {
     find: () => {
         const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, 
                     acc.name AS teacher_name, room.name AS roomName, ts.start_time AS startTime, 
-                    ts.end_time AS endTime
+                    ts.end_time AS endTime, ts.id AS teacher_subject_id
                     FROM student.subject AS sj
-                    INNER JOIN student.teacher_subject AS ts
+                    LEFT JOIN student.teacher_subject AS ts
                     ON sj.id = ts.subject_id
-                    INNER JOIN student.teacher AS tc
+                    LEFT JOIN student.teacher AS tc
                     ON ts.teacher_id = tc.id
-                    INNER JOIN student.accounts AS acc
+                    LEFT JOIN student.accounts AS acc
                     ON tc.account_id = acc.id
                     LEFT JOIN student.room AS room
                     ON ts.room_id = room.id`;
@@ -63,10 +63,18 @@ const Subject = {
         return query(sql, [subjectName, subjectId]).then(() => ({ success: true }));
     },
 
-    updateTeacherSubject: (subjectId, teacherId) => {
-        const sql = `UPDATE student.teacher_subject SET teacher_id = ? 
+    updateTeacherSubject: (subjectId, teacherId, roomId, formatStartTime, formatEndTime) => {
+        const sql = `UPDATE student.teacher_subject 
+                    SET teacher_id = ?, room_id = ?, start_time = ?, end_time = ? 
                     WHERE subject_id = ?`;
-        return query(sql, [teacherId, subjectId]).then(() => ({ success: true }));
+        return query(sql, [teacherId, roomId, formatStartTime, formatEndTime, subjectId]).then(() => ({ success: true }));
+    },
+
+    checkSubjectHaveStudent: (subjectId) => {
+        const sql = `SELECT COUNT(sc.student_id) AS number_student
+                    FROM student.score AS sc
+                    WHERE sc.subject_id = ?`
+        return query(sql, [subjectId]).then((result) => result[0]?.number_student || 0)
     },
 
     delete: (subjectId) => {
@@ -81,12 +89,20 @@ const Subject = {
         return query(sql, [subjectId]).then(() => ({ success: true }));
     },
 
-    checkRoom: (roomId, startTime, endTime) => {
+    checkRoomAdd: (roomId, startTime, endTime) => {
         const sql = `SELECT * 
                     FROM student.teacher_subject
                     WHERE room_id = ? AND start_time < ? AND end_time > ?
                     LIMIT 1`;
         return query(sql, [roomId, endTime, startTime]);
+    },
+
+    checkRoomUpdate: (id, roomId, startTime, endTime) => {
+        const sql = `SELECT * 
+                    FROM student.teacher_subject
+                    WHERE id != ? AND room_id = ? AND start_time < ? AND end_time > ?
+                    LIMIT 1`;
+        return query(sql, [id, roomId, endTime, startTime]);
     }
 }
 
