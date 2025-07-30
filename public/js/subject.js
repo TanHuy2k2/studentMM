@@ -141,7 +141,7 @@ function showDetail(subject) {
     <button class="submit-btn" onclick="showSubject()">Back</button>`;
 }
 
-function populateSelect(url, selectId, valueKey, textKey, errorMessage) {
+function populateSelect(url, selectId, valueKey, textKey, selectedValue, errorMessage) {
   $.ajax({
     url: url,
     type: 'GET',
@@ -151,6 +151,11 @@ function populateSelect(url, selectId, valueKey, textKey, errorMessage) {
       const option = document.createElement('option');
       option.value = item[valueKey];
       option.textContent = item[textKey];
+
+      if (item[textKey] === selectedValue && selectedValue != '') {
+        option.selected = true;
+      }
+
       select.appendChild(option);
     });
   }).catch(() => {
@@ -185,8 +190,8 @@ function addSubject() {
     </div>
     <button class="submit-btn" onclick="saveSubject()">Add</button>`;
 
-  populateSelect('/teacher/find', 'teacherSelect', 'teacher_id', 'teacher_name', 'Failed to load Teacher list. Please try again later.');
-  populateSelect('/room/find', 'roomSelect', 'id', 'name', 'Failed to load Room list. Please try again later.');
+  populateSelect('/teacher/find', 'teacherSelect', 'teacher_id', 'teacher_name', '', 'Failed to load Teacher list. Please try again later.');
+  populateSelect('/room/find', 'roomSelect', 'id', 'name', '', 'Failed to load Room list. Please try again later.');
 }
 
 async function saveSubject() {
@@ -261,52 +266,19 @@ function update(subject) {
       <input type="datetime-local" id="endTime" placeholder="Enter end time" value="${formatDateTime(subject.endTime)}" required>
     </div>
 
-    <button class="submit-btn" onclick="saveUpdate(${subject.subject_id}, ${subject.teacher_id})">Update</button>`;
+    <button class="submit-btn" onclick="saveUpdate(${subject.subject_id}, '${subject.subject_name}', ${subject.teacher_subject_id})">Update</button>`;
 
-  $.ajax({
-    url: '/teacher/find',
-    type: 'GET',
-  }).then(response => {
-    const teacherSelect = document.getElementById('teacherSelect');
-    response.forEach(res => {
-      const option = document.createElement('option');
-      option.value = res.teacher_id;
-      option.textContent = res.teacher_name;
-
-      if (res.teacher_name === subject.teacher_name) {
-        option.selected = true;
-      }
-
-      teacherSelect.appendChild(option);
-    });
-  }).catch(error => {
-    alert('Failed to load Subject list. Please try again later.');
-  });
-
-  $.ajax({
-    url: '/room/find',
-    type: 'GET',
-  }).then(response => {
-    const roomSelect = document.getElementById('roomSelect');
-    response.forEach(res => {
-      const option = document.createElement('option');
-      option.value = res.id;
-      option.textContent = res.name;
-
-      if (res.name === subject.roomName) {
-        option.selected = true;
-      }
-
-      roomSelect.appendChild(option);
-    });
-  }).catch(error => {
-    alert('Failed to load Subject list. Please try again later.');
-  });
+  populateSelect('/teacher/find', 'teacherSelect', 'teacher_id', 'teacher_name', subject.teacher_name, 'Failed to load teacher list');
+  populateSelect('/room/find', 'roomSelect', 'id', 'name', subject.roomName, 'Failed to load room list');
 }
 
-async function saveUpdate(subject_id, teacher_id) {
+async function saveUpdate(subjectId, defaultSubjectName, teacherSubjectId) {
   const subjectName = $('#subjectName').val();
   const teacherId = $('#teacherSelect').val();
+  const roomId = $('#roomSelect').val();
+  const startTime = $('#startTime').val();
+  const endTime = $('#endTime').val();
+
   if (!subjectName) {
     alert("Please enter subject name.");
     return;
@@ -316,21 +288,27 @@ async function saveUpdate(subject_id, teacher_id) {
     const response_update_subject = await $.ajax({
       url: '/subject/update',
       type: 'PATCH',
-      data: { subjectId: subject_id, subjectName: subjectName },
+      data: { subjectId: subjectId, subjectName: subjectName },
     });
     if (!response_update_subject.success) {
       return alert("Update unsuccessful")
     }
 
-    if (teacherId != teacher_id) {
-      const response_update_subject_teacher = await $.ajax({
-        url: '/subject/update-teacher-subject',
-        type: 'PATCH',
-        data: { subjectId: subject_id, teacherId: teacherId }
-      });
-      if (!response_update_subject_teacher.success) {
-        return alert("Update unsuccessful");
-      }
+    const response_update_subject_teacher = await $.ajax({
+      url: '/subject/update-teacher-subject',
+      type: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify({
+        id: parseInt(teacherSubjectId),
+        subjectId: subjectId,
+        teacherId: teacherId,
+        roomId: parseInt(roomId),
+        startTime: startTime,
+        endTime: endTime
+      })
+    });
+    if (!response_update_subject_teacher.success) {
+      return alert(response_update_subject_teacher.message);
     }
 
     alert('Update subject successfully!');
@@ -352,7 +330,7 @@ async function deleteSubject(subject_id) {
       data: { subjectId: subject_id },
     });
     if (!response_delete.success) {
-      return alert("Delete unsuccessful")
+      return alert(response_delete.message);
     }
 
     alert('Delete Subject successful!');

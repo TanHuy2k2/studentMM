@@ -62,10 +62,10 @@ exports.add = (req, res, next) => {
 exports.addTeacherSubject = async (req, res, next) => {
     const { subjectId, teacherId, roomId, startTime, endTime } = req.body;
     const formatStartTime = formatDateTime(startTime);
-    const formatEndTime = formatDateTime(endTime)
+    const formatEndTime = formatDateTime(endTime);
 
     try {
-        const check = await subjectModel.checkRoom(roomId, formatStartTime, formatEndTime);
+        const check = await subjectModel.checkRoomAdd(roomId, formatStartTime, formatEndTime);
         if (check.length) {
             return res.json({ success: false, message: "This room is already booked." });
         }
@@ -96,25 +96,37 @@ exports.update = (req, res, next) => {
         })
 }
 
-exports.updateTeacherSubject = (req, res, next) => {
-    const { subjectId, teacherId } = req.body;
+exports.updateTeacherSubject = async (req, res, next) => {
+    const { id, subjectId, teacherId, roomId, startTime, endTime } = req.body;
+    const formatStartTime = formatDateTime(startTime);
+    const formatEndTime = formatDateTime(endTime);
 
-    subjectModel.updateTeacherSubject(subjectId, teacherId)
-        .then((result) => {
-            return res.json(result);
-        }).catch((err) => {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot update data table TeacherSubject",
-                error: err.message
-            });
-        })
+    try {
+        const check = await subjectModel.checkRoomUpdate(id, roomId, formatStartTime, formatEndTime);
+        if (check.length) {
+            return res.json({ success: false, message: "This room is already booked." });
+        }
+
+        const result = await subjectModel.updateTeacherSubject(subjectId, teacherId, roomId, formatStartTime, formatEndTime);
+        return res.json(result);
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: "Cannot update data table TeacherSubject",
+            error: err.message
+        });
+    }
 }
 
 exports.delete = async (req, res, next) => {
     const { subjectId } = req.body;
 
     try {
+        const numberStudent = await subjectModel.checkSubjectHaveStudent(subjectId);
+        if (numberStudent) {
+            return res.json({ success: false, message: "Cannot delete this subject. Because subject have students!" })
+        }
+
         const deleteTeacherSubject = await subjectModel.deleteTeacherSubject(subjectId);
         if (deleteTeacherSubject.success) {
             const deleteSubject = await subjectModel.delete(subjectId);
