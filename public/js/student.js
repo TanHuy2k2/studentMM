@@ -18,8 +18,6 @@ const getClassFilter = () => {
   });
 }
 
-getClassFilter();
-
 const filterChange = () => {
   showStudent(1);
   updatePagination();
@@ -38,6 +36,7 @@ function hidePagging() {
 }
 
 function showStudent(page = 1) {
+  getClassFilter();
   document.getElementById('search').style.display = 'flex';
   const classID = document.getElementById('classFilter').value;
   const minGpa = document.getElementById('min_gpa').value;

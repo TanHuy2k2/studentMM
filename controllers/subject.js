@@ -140,3 +140,18 @@ exports.delete = async (req, res, next) => {
         });
     }
 }
+
+exports.cancelLesson = (req, res, next) => {
+    const { teacherSubjectId } = req.body;
+
+    subjectModel.cancelLesson(teacherSubjectId)
+        .then((result) => {
+            return res.json(result);
+        }).catch((err) => {
+            return res.status(400).json({
+                success: false,
+                message: "Cannot cancel lesson.",
+                error: err.message
+            });
+        })
+}
