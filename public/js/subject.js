@@ -59,7 +59,7 @@ function showSubjectTeacher() {
         const row = `
           <tr>
             <td id="col">${i}</td>
-            <td>${subject.name}</td>
+            <td>${subject.subject_name}</td>
             <td id="col"><button id="btn-check" onclick="showStudentScore(${subject.subject_id})">check</button></td>
           </tr>
         `;

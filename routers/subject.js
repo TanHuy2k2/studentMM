@@ -28,4 +28,7 @@ subjectRouter.patch('/update-teacher-subject', validateUpdateTeacherSubject, sub
 // Route to delete subject by subject id
 subjectRouter.delete('/delete', validateDelete, subjectController.delete);
 
+// Route to cancel lesson
+subjectRouter.patch('/cancel-lesson', subjectController.cancelLesson);
+
 module.exports = subjectRouter;

@@ -14,6 +14,7 @@
     <script src="/public/js/student.js"></script>
     <script src="/public/js/teacher.js"></script>
     <script src="/public/js/account.js"></script>
+    <script src="/public/js/schedule.js"></script>
 </head>
 
 <body>
@@ -28,8 +29,10 @@
             <button onclick="showTeacher()">Teacher</button>
             <button onclick="showSubject()">Subject</button>
             <% break; case 'teacher' : %>
+                <button onclick="showSchedule()">Schedule</button>
                 <button onclick="showSubjectTeacher()">Subject</button>
                 <% break; case 'student' : %>
+                    <button onclick="showScheduleStudent()">Schedule</button>
                     <button onclick="showScore()">Result</button>
                     <button onclick="showSubjectForRegister()">Register subject</button>
                     <% break; } %>

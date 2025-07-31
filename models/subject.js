@@ -19,17 +19,23 @@ const Subject = {
 
     getSubjectByTeacherId: (teacherId) => {
         const sql = `
-            SELECT ts.teacher_id, ts.subject_id, sj.name
+            SELECT ts.teacher_id, ts.subject_id, sj.name AS subject_name, room.name AS roomName, 
+            ts.start_time AS startTime, ts.end_time AS endTime, ts.id AS teacher_subject_id,
+            ts.isCanceled
             FROM student.teacher_subject ts
-            inner join student.subject sj
+            LEFT JOIN student.subject sj
             ON ts.subject_id = sj.id
-            WHERE ts.teacher_id = ?`;
+            LEFT JOIN student.room AS room
+            ON ts.room_id = room.id
+            WHERE ts.teacher_id = ?
+            ORDER BY start_time`;
         return query(sql, [teacherId]);
     },
 
     getSubjectForStudent: (studentId) => {
         const sql = `SELECT sj.id AS subject_id, sj.name AS subject_name, tc.id AS teacher_id, 
-                    acc.name AS teacher_name
+                    acc.name AS teacher_name, room.name AS roomName, ts.start_time AS startTime, 
+                    ts.end_time AS endTime, ts.id AS teacher_subject_id, ts.isCanceled
                     FROM student.subject AS sj
                     INNER JOIN student.teacher_subject AS ts 
                     ON sj.id = ts.subject_id
@@ -37,11 +43,14 @@ const Subject = {
                     ON ts.teacher_id = tc.id
                     INNER JOIN student.accounts AS acc 
                     ON tc.account_id = acc.id
+                    LEFT JOIN student.room AS room
+                    ON ts.room_id = room.id
                     WHERE sj.id NOT IN (
                         SELECT subject_id
                         FROM student.score
                         WHERE student_id = ?
-                    );`
+                    )
+                    ORDER BY start_time`
         return query(sql, [studentId]);
     },
 
@@ -65,7 +74,7 @@ const Subject = {
 
     updateTeacherSubject: (subjectId, teacherId, roomId, formatStartTime, formatEndTime) => {
         const sql = `UPDATE student.teacher_subject 
-                    SET teacher_id = ?, room_id = ?, start_time = ?, end_time = ? 
+                    SET teacher_id = ?, room_id = ?, start_time = ?, end_time = ?, isCanceled = false
                     WHERE subject_id = ?`;
         return query(sql, [teacherId, roomId, formatStartTime, formatEndTime, subjectId]).then(() => ({ success: true }));
     },
@@ -103,6 +112,13 @@ const Subject = {
                     WHERE id != ? AND room_id = ? AND start_time < ? AND end_time > ?
                     LIMIT 1`;
         return query(sql, [id, roomId, endTime, startTime]);
+    },
+
+    cancelLesson: (id) => {
+        const sql = `UPDATE student.teacher_subject
+                    SET isCanceled = true
+                    WHERE id = ?`;
+        return query(sql, [id]).then(() => ({ success: true }));
     }
 }
 
