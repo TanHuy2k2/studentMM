@@ -1,6 +1,5 @@
 # 🎓 Student Management System (Node.js)
-A backend application for managing students and courses built with Node.js, NestJS, and EJS template engine.  
-This project follows MVC architecture and provides basic CRUD functionalities.
+A backend application for managing students and courses built with Node.js, NestJS, and EJS template engine.
 
 ---
 
@@ -25,6 +24,7 @@ This project follows MVC architecture and provides basic CRUD functionalities.
 ---
 
 ## 📁 Project Structure
+```
 ├── controllers/ # Route handlers
 ├── middlewave/ # Middleware (auth, validation)
 ├── models/ # Database models
@@ -35,7 +35,7 @@ This project follows MVC architecture and provides basic CRUD functionalities.
 ├── app.js # Server startup
 ├── .env.example # Env config sample
 └── README.md
-
+```
 ---
 
 ## ⚙️ Installation
