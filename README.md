@@ -25,6 +25,7 @@ This project follows MVC architecture and provides basic CRUD functionalities.
 ---
 
 ## 📁 Project Structure
+```
 ├── controllers/ # Route handlers
 ├── middlewave/ # Middleware (auth, validation)
 ├── models/ # Database models
@@ -33,9 +34,9 @@ This project follows MVC architecture and provides basic CRUD functionalities.
 ├── utils/ # Helper utilities
 ├── views/ # EJS templates
 ├── app.js # Server startup
-├── .env.example # Env config sample
+├── .env.example # Environment config sample
 └── README.md
-
+```
 ---
 
 ## ⚙️ Installation
