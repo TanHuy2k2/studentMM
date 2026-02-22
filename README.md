@@ -1,35 +1,71 @@
-# 🧪 Next.js Project
+# 🎓 Student Management System (Node.js)
 
-Đây là một dự án xây dựng bằng [Next.js](https://nextjs.org/) – framework React mạnh mẽ để phát triển ứng dụng web hiện đại với khả năng server-side rendering (SSR) và static site generation (SSG).
-
-## 🚀 Tính năng
-
-- ⚛️ React 18 + Next.js
-- 🔥 Fast Refresh
-- 📁 Cấu trúc thư mục rõ ràng
-- ✅ Dễ dàng mở rộng
+A backend application for managing students and courses built with NodeJS, ExpressJS, and EJS template engine.
 
 ---
 
-## 🛠️ Cài đặt
+## 📌 Features
 
-### Yêu cầu:
+- Student management (Create, Read, Update, Delete)
+- Course management
+- Server-side rendering with EJS
+- Input validation and error handling
+- Organized project structure
 
-- Node.js >= 16.8
-- npm hoặc yarn
+---
 
-### Các bước:
+## 🛠 Tech Stack
+
+- NodeJS
+- ExpressJS
+- EJS
+- MySQL
+- Git
+- Postman
+
+---
+
+## 📁 Project Structure
+
+```
+├── controllers/ # Route handlers
+├── middleware/ # Middleware (auth, validation)
+├── models/ # Database models
+├── public/ # Static resources
+├── routers/ # API & view routes
+├── utils/ # Helper utilities
+├── views/ # EJS templates
+├── app.js # Server startup
+├── .env.example # Env config sample
+└── README.md
+```
+
+---
+
+## ⚙️ Installation
+
+Clone the repository:
 
 ```bash
-# 1. Clone project
 git clone https://github.com/TanHuy2k2/studentMM.git
-
-# 2. Di chuyển vào thư mục dự án
 cd studentMM
-
-# 3. Cài đặt dependencies
 npm install
 
-# 4. Chạy dự án
-npm start
+🔑 Environment Variables
+Create a .env file in the root directory:
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=yourpassword
+DB_NAME=student_db
+PORT=3000
 
+▶️ Run the Project
+npm start
+Open browser:
+http://localhost:3000
+
+👨‍💻 Author
+Nguyen Tan Huy
+GitHub: https://github.com/TanHuy2k2
+Email: tanhuyqn6789@gmail.com
+```
